@@ -1,5 +1,5 @@
 
-# VaidyaGuru - BAMS Learning Portal & AI Companion
+# VaidyaGuru - medical line Learning Portal & AI Companion
 
 VaidyaGuru is a comprehensive Progressive Web App (PWA) designed specifically for BAMS (Bachelor of Ayurvedic Medicine and Surgery) students and professionals. It bridges the gap between ancient Ayurvedic wisdom and modern technology.
 
