@@ -3,11 +3,16 @@ import { GoogleGenAI, Type, Modality } from "@google/genai";
 import { FilePart, User, Book, Language, Role, Adhyaya, CustomSource, MedicalField, DailyQuote } from "./types";
 
 const getAIClient = () => {
-  if (!process.env.API_KEY) {
-    throw new Error("API_KEY is not configured.");
+  // 
+  const apiKey = import.meta.env.VITE_API_KEY;
+  
+  if (!apiKey) {
+    throw new Error("API_KEY is not configured in .env file.");
   }
-  return new GoogleGenAI({ apiKey: process.env.API_KEY });
+  
+  return new GoogleGenerativeAI(apiKey);
 };
+
 
 export const translateContent = async (text: string, targetLanguage: Language): Promise<string> => {
   const ai = getAIClient();
