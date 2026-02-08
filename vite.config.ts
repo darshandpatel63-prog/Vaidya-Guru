@@ -10,11 +10,7 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react()],
     base: './', // Ensures assets load correctly on Vercel/GitHub Pages
-    define: {
-      // This fixes the "process is not defined" error by replacing it with the actual value during build
-      'process.env.API_KEY': JSON.stringify(env.API_KEY),
-      // Fallback to prevent crash if other process.env vars are accessed
-      'process.env': {} 
+    
     },
     build: {
       outDir: 'dist',
