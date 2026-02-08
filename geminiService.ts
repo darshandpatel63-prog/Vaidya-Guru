@@ -1,14 +1,17 @@
 
-import { GoogleGenAI, Type, Modality } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { FilePart, User, Book, Language, Role, Adhyaya, CustomSource, MedicalField, DailyQuote } from "./types";
 
 const getAIClient = () => {
   // 
-  const apiKey = import.meta.env.VITE_API_KEY;
+  const apiKey = import.meta.env.VITE_API_KEY; 
   
   if (!apiKey) {
-    throw new Error("API_KEY is not configured in .env file.");
+    throw new Error("API_KEY missing! Check Vercel Environment Variables.");
   }
+  return new GoogleGenerativeAI(apiKey);
+};
+
   
   return new GoogleGenerativeAI(apiKey);
 };
