@@ -49,7 +49,7 @@ export const getBookContextResponse = async (query: string, book: Book, adhyaya:
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-1.5-flash",
       contents: [{ role: 'user', parts: [{ text: `Chapter Context:\n${context}\n\nUser Question: ${query}` }] }],
       config: { systemInstruction }
     });
@@ -68,7 +68,7 @@ export const generateDailyQuote = async (userField: MedicalField): Promise<Daily
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-1.5-flash",
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
       config: {
         responseMimeType: "application/json",
@@ -109,7 +109,7 @@ export const generateAyurvedicImage = async (prompt: string): Promise<string | u
   const ai = getAIClient();
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash-image',
+      model: 'gemini-1.5-flash-image',
       contents: {
         parts: [{ text: `High-quality clinical illustration of: ${prompt}. Professional medical educational style.` }],
       },
@@ -143,7 +143,7 @@ export const getVaidyaGuruResponse = async (
   useThinking: boolean = false
 ) => {
   const ai = getAIClient();
-  const model = useThinking ? "gemini-3-pro-preview" : "gemini-3-flash-preview";
+  const model = useThinking ? "gemini-1.5-flash" : "gemini-3-flash-preview";
   const systemInstruction = getPersonaPrompt(user);
 
   const contents = [
@@ -163,7 +163,7 @@ export const getStudyDeskResponse = async (query: string, books: Book[], customS
   const systemInstruction = `You are a Senior Medical Researcher. Answer based on these sources: (${sources}). User is in field: ${user.medicalField}.`;
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-1.5-flash",
       contents: [{ role: 'user', parts: [{ text: query }] }],
       config: { systemInstruction }
     });
@@ -185,7 +185,7 @@ export const generateSpeech = async (text: string, voice: 'Kore' | 'Puck' = 'Kor
   const ai = getAIClient();
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash-preview-tts",
+      model: "gemini-1.5-flash-preview-tts",
       contents: [{ parts: [{ text }] }],
       config: { responseModalities: [Modality.AUDIO], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } } },
     });
