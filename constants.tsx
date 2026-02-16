@@ -34,11 +34,11 @@ export const MOCK_MATERIALS: StudyMaterial[] = [
   },
   {
     id: 'sanskrit-2',
-    title: 'Subhashitani (Shloka Collection)',
+    title: 'Sanskrit_Grammar_Cases_and_Roles',
     subject: 'Sanskrit',
     type: 'pdf',
-    url: '#',
-    description: 'Important shlokas for exam.'
+    url: 'https://drive.google.com/file/d/1ftL29mBE-LfBfuKdAAICrMizHp9kAsNj/view?usp=drivesdk',
+    description: 'Sanskrit_Grammar_Cases_and_Roles.'
   },
 
   // 3. PADARTHA VIJNANA
@@ -59,17 +59,17 @@ export const MOCK_MATERIALS: StudyMaterial[] = [
     description: 'in detail Study of Shrishti utpati kram in youtube.'
   },
 
-  // 4. KRIYA SHARIR (Physiology)
+  // 4. KRIYA SHARIRA (Physiology)
   {
     id: 'kriya-1',
     title: 'Tridosha Concept Video',
-    subject: 'Kriya Sharir',
+    subject: 'Kriya Sharira',
     type: 'video',
     url: '#',
     description: 'Vata Pitta Kapha explained.'
   },
   {
-    id: 'Kriya Sharira (physiology)-pdf-1',         
+    id: 'Kriya Sharira-pdf-1',         
     title:'(PA-1)Elements_Doshas_Health ',
     subject: 'Kriya sharira',  
     type: 'pdf',           
