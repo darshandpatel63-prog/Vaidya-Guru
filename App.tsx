@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+  import React, { useState, useEffect } from 'react';
 import { VaidyaGuru } from './components/VaidyaGuru';
 import { BookReader } from './components/BookReader';
 import { Profile } from './components/Profile';
@@ -9,31 +8,32 @@ import { ExamPortal } from './components/ExamPortal';
 import { Scheduler } from './components/Scheduler';
 import { AdminPanel } from './components/AdminPanel';
 import { DoctorConnect } from './components/DoctorConnect';
+import { MaterialLibrary } from './components/MaterialLibrary'; // Import new component
 import { MOCK_BOOKS } from './constants';
 import { Book, User, CourseLevel, Language, Role, Gender, MedicalField, DailyQuote } from './types';
 import { AuthProvider, useAuth } from './AuthContext';
-import { BannerAd, BannerAdSize, TestIds, InterstitialAd } from './components/BannerAd';
+import { BannerAd, BannerAdSize, TestIds, InterstitialAd, RewardedAd } from './components/BannerAd';
 import { generateDailyQuote, checkFestiveTheme } from './geminiService';
 
 // Text constants
 const UI_TEXT = {
   [Language.ENGLISH]: {
     lib: "Library", guru: "VaidyaGuru", desk: "Study Desk", board: "Bulletin", exam: "Exams", 
-    schedule: "Schedule", connect: "Connect", admin: "Admin", prof: "Profile",
+    schedule: "Schedule", connect: "Connect", admin: "Admin", prof: "Profile", material: "Extra Material",
     privacyTitle: "Dedication & Terms", privacyAccept: "I Agree & Begin", back: "Back", finish: "Begin My Journey", selectRole: "Select Profession",
     selectGender: "Select Gender", selectField: "Medical Field", selectLevel: "Course Level", enterName: "Enter Your Name",
     searchPlaceholder: "Search Shastras..."
   },
   [Language.GUJARATI]: {
     lib: "પુસ્તકાલય", guru: "વૈદ્યગુરુ", desk: "અભ્યાસ ડેસ્ક", board: "નોટિસ બોર્ડ", exam: "પરીક્ષા", 
-    schedule: "સમયપત્રક", connect: "સંપર્ક", admin: "એડમિન", prof: "પ્રોફાઇલ",
+    schedule: "સમયપત્રક", connect: "સંપર્ક", admin: "એડમિન", prof: "પ્રોફાઇલ", material: "વધારાનું સાહિત્ય",
     privacyTitle: "સમર્પણ અને સુરક્ષા", privacyAccept: "હું સંમત છું", back: "પાછળ", finish: "મુસાફરી શરૂ કરો", selectRole: "વ્યવસાય પસંદ કરો",
     selectGender: "જાતિ પસંદ કરો", selectField: "ક્ષેત્ર પસંદ કરો", selectLevel: "લેવલ પસંદ કરો", enterName: "તમારું નામ લખો",
     searchPlaceholder: "શાસ્ત્રો શોધો..."
   },
   [Language.HINDI]: {
     lib: "पुस्तकालय", guru: "वैद्यगुरु", desk: "अध्ययन डेस्क", board: "नोटिस बोर्ड", exam: "परीक्षा", 
-    schedule: "समय सारिणी", connect: "संपर्क", admin: "एडमिन", prof: "प्रोफाइल",
+    schedule: "समय सारिणी", connect: "संपर्क", admin: "एडमिन", prof: "प्रोफाइल", material: "अतिरिक्त सामग्री",
     privacyTitle: "समर्पण और सुरक्षा", privacyAccept: "मैं सहमत हूँ", back: "पीछे", finish: "शुरू करें", selectRole: "पेशा चुनें",
     selectGender: "लिंग चुनें", selectField: "क्षेत्र चुनें", selectLevel: "स्तर चुनें", enterName: "अपना नाम दर्ज करें",
     searchPlaceholder: "शास्त्र खोजें..."
@@ -160,7 +160,7 @@ const MainApp: React.FC = () => {
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   
   // Updated ActiveTab type to include new features
-  const [activeTab, setActiveTab] = useState<'library' | 'guru' | 'desk' | 'board' | 'exam' | 'schedule' | 'connect' | 'admin' | 'profile'>('library');
+  const [activeTab, setActiveTab] = useState<'library' | 'guru' | 'desk' | 'board' | 'exam' | 'schedule' | 'connect' | 'admin' | 'profile' | 'material'>('library');
   
   const [search, setSearch] = useState('');
   const [quote, setQuote] = useState<DailyQuote | null>(null);
@@ -178,6 +178,26 @@ const MainApp: React.FC = () => {
     }
   }, [user]);
 
+  // Handle Book Click with 2-Hour Unlock Logic
+  const handleBookClick = (book: Book) => {
+    const STORAGE_KEY_PREFIX = 'vaidyaguru_book_unlock_';
+    const unlockKey = `${STORAGE_KEY_PREFIX}${book.id}`;
+    const unlockedTime = localStorage.getItem(unlockKey);
+    const now = Date.now();
+    const TWO_HOURS = 2 * 60 * 60 * 1000;
+
+    // Check if book is already unlocked and within valid time window
+    if (unlockedTime && (now - parseInt(unlockedTime, 10) < TWO_HOURS)) {
+      setSelectedBook(book);
+    } else {
+      // Show Rewarded Ad to unlock
+      RewardedAd.show(() => {
+        localStorage.setItem(unlockKey, now.toString());
+        setSelectedBook(book);
+      });
+    }
+  };
+
   if (authLoading) return <div className="min-h-screen flex items-center justify-center bg-stone-50"><div className="flex flex-col items-center gap-4"><div className="w-10 h-10 border-4 border-green-900 border-t-transparent rounded-full animate-spin"></div><p className="font-bold serif-font text-stone-500">Loading Wisdom...</p></div></div>;
   if (!user || !user.isProfileComplete) return <OnboardingFlow />;
 
@@ -191,6 +211,7 @@ const MainApp: React.FC = () => {
   // Navigation Items
   const navItems = [
     { id: 'library', label: t.lib, icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /> },
+    { id: 'material', label: t.material, icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z" /> }, // New Icon for Material
     { id: 'guru', label: t.guru, icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /> },
     { id: 'desk', label: t.desk, icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /> },
     { id: 'board', label: t.board, icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /> },
@@ -278,7 +299,7 @@ const MainApp: React.FC = () => {
             {/* Book Grid */}
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 px-4 pb-24">
               {filteredBooks.map((book) => (
-                <div key={book.id} onClick={() => InterstitialAd.show(() => setSelectedBook(book))} className="bg-white rounded-[1.5rem] overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer border border-stone-100 group">
+                <div key={book.id} onClick={() => handleBookClick(book)} className="bg-white rounded-[1.5rem] overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer border border-stone-100 group">
                   <div className="aspect-[3/4] overflow-hidden relative">
                     <img src={book.coverImage} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt={book.title} />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
@@ -302,6 +323,7 @@ const MainApp: React.FC = () => {
         {activeTab === 'schedule' && <Scheduler user={user} />}
         {activeTab === 'connect' && <DoctorConnect user={user} />}
         {activeTab === 'admin' && <AdminPanel user={user} />}
+        {activeTab === 'material' && <MaterialLibrary user={user} />}
         {activeTab === 'profile' && <Profile />}
       </main>
 
@@ -318,3 +340,4 @@ const MainApp: React.FC = () => {
 
 const App: React.FC = () => <AuthProvider><MainApp /></AuthProvider>;
 export default App;
+            
