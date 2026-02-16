@@ -71,9 +71,9 @@ export const MOCK_MATERIALS: StudyMaterial[] = [
   {
     id: 'Kriya Sharira (physiology)-pdf-1',         
     title:'(PA-1)Elements_Doshas_Health ',
-    subject: 'Kriya sharira(Physiology)',  
+    subject: 'Kriya sharira',  
     type: 'pdf',           
-    url: 'https://drive.google.com/drive/folders/1tkVJA8_-lz8snOJZylbaLNDAyIefBp6Z',  
+    url: 'https://drive.google.com/file/d/1-VcxvKHGGkqoIIQIKN0fvENEfVDBCXE3/view?usp=drivesdk',  
     description: 'Pa-1 short notes'
 },
   
