@@ -1,4 +1,3 @@
-
 export enum Language {
   GUJARATI = 'gu',
   ENGLISH = 'en',
@@ -148,4 +147,17 @@ export interface DailyQuote {
   original: string;
   translations: { [key in Language]: string };
   date: string; // YYYY-MM-DD
+}
+
+// New Types for Extra Material
+export type MaterialType = 'video' | 'photo' | 'ppt' | 'pdf';
+
+export interface StudyMaterial {
+  id: string;
+  title: string;
+  subject: string;
+  type: MaterialType;
+  url: string; // External Link (Drive/YouTube)
+  thumbnail?: string;
+  description?: string;
 }
