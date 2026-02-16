@@ -44,19 +44,19 @@ export const MOCK_MATERIALS: StudyMaterial[] = [
   // 3. PADARTHA VIJNANA
   {
     id: 'padartha-1',
-    title: 'Darshana Shastra Chart',
+    title: 'shrishti utpati kram short note',
     subject: 'Padartha Vijnana',
     type: 'photo',
-    url: '#',
-    description: 'Chart showing 9 Darshanas.'
+    url: 'http://youtube.com/post/UgkxqxJH_DHAQ1B3evDapj551vcUQOXWTEGb?si=TQZdt6S_-f8fVzmd',
+    description: 'shrishti utpati kram short notes.'
   },
   {
     id: 'padartha-2',
-    title: 'Dravya Gunadi Vijnan PPT',
+    title: 'According to ayurveda Shrishti utpati cram',
     subject: 'Padartha Vijnana',
-    type: 'ppt',
-    url: '#',
-    description: 'PowerPoint presentation.'
+    type: 'video',
+    url: 'https://youtu.be/pJ6Ypf6MGsk?si=jHuaznaSe60AWKdj',
+    description: 'in detail Study of Shrishti utpati kram in youtube.'
   },
 
   // 4. KRIYA SHARIR (Physiology)
@@ -68,6 +68,15 @@ export const MOCK_MATERIALS: StudyMaterial[] = [
     url: '#',
     description: 'Vata Pitta Kapha explained.'
   },
+  {
+    id: 'Kriya Sharira (physiology)-pdf-1',         
+    title:'(PA-1)Elements_Doshas_Health ',
+    subject: 'Kriya sharira(Physiology)',  
+    type: 'pdf',           
+    url: 'https://drive.google.com/drive/folders/1tkVJA8_-lz8snOJZylbaLNDAyIefBp6Z',  
+    description: 'Pa-1 short notes'
+},
+  
 
   // 5. RACHANA SHARIR (Anatomy)
   {
