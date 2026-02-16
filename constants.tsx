@@ -1,5 +1,84 @@
+import { Book, CourseLevel, Language, MedicalField, StudyMaterial } from './types';
 
-import { Book, CourseLevel, Language, MedicalField } from './types';
+// ==========================================
+// EXTRA STUDY MATERIALS (Developer Added)
+// Add your Google Drive / YouTube links here
+// ==========================================
+export const MOCK_MATERIALS: StudyMaterial[] = [
+  // 1. SAMHITA ADHYAYAN (Astanga Hridaya / Charaka)
+  {
+    id: 'samhita-1',
+    title: 'Astanga Hridaya Sutrasthana Ch 1',
+    subject: 'Samhita Adhyayan',
+    type: 'video',
+    url: '#', // <--- Paste YouTube Link Here
+    description: 'Ayushkamiya Adhyaya explanation.'
+  },
+  {
+    id: 'samhita-2',
+    title: 'Charaka Samhita Intro Notes',
+    subject: 'Samhita Adhyayan',
+    type: 'pdf',
+    url: '#', // <--- Paste Drive Link Here
+    description: 'Notes on Sutrasthana basics.'
+  },
+
+  // 2. SANSKRITAM
+  {
+    id: 'sanskrit-1',
+    title: 'Maheshwar Sutra (Grammar)',
+    subject: 'Sanskrit',
+    type: 'video',
+    url: '#',
+    description: 'Basic grammar rules video.'
+  },
+  {
+    id: 'sanskrit-2',
+    title: 'Subhashitani (Shloka Collection)',
+    subject: 'Sanskrit',
+    type: 'pdf',
+    url: '#',
+    description: 'Important shlokas for exam.'
+  },
+
+  // 3. PADARTHA VIJNANA
+  {
+    id: 'padartha-1',
+    title: 'Darshana Shastra Chart',
+    subject: 'Padartha Vijnana',
+    type: 'photo',
+    url: '#',
+    description: 'Chart showing 9 Darshanas.'
+  },
+  {
+    id: 'padartha-2',
+    title: 'Dravya Gunadi Vijnan PPT',
+    subject: 'Padartha Vijnana',
+    type: 'ppt',
+    url: '#',
+    description: 'PowerPoint presentation.'
+  },
+
+  // 4. KRIYA SHARIR (Physiology)
+  {
+    id: 'kriya-1',
+    title: 'Tridosha Concept Video',
+    subject: 'Kriya Sharir',
+    type: 'video',
+    url: '#',
+    description: 'Vata Pitta Kapha explained.'
+  },
+
+  // 5. RACHANA SHARIR (Anatomy)
+  {
+    id: 'rachana-1',
+    title: 'Bone Skeletons Images',
+    subject: 'Rachana Sharir',
+    type: 'photo',
+    url: '#',
+    description: 'Human skeleton labeling.'
+  }
+];
 
 export const MOCK_BOOKS: Book[] = [
   // ==========================================
@@ -98,40 +177,9 @@ There are 107 Marma points where life energy resides. Head, Heart, and Bladder a
       }
     ]
   },
-  {
-    id: 'bams1-sanskrit',
-    title: 'Sanskrit & Ayurved Itihas',
-    author: 'Dr. B.K. Gupta',
-    subject: 'Language & History',
-    level: CourseLevel.UG1,
-    language: Language.HINDI,
-    coverImage: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=400',
-    sthanas: [
-      {
-        id: 'san-s1',
-        title: 'Vyakaran',
-        adhyayas: [
-          {
-            id: 'san-a1',
-            number: 1,
-            title: 'Maheshwara Sutrani',
-            content: {
-              [Language.HINDI]: `अध्याय १: माहेश्वर सूत्र
-अइउण् । ऋलृक् । एओङ् । ऐऔच् । हयवरट् । लण् ।
-ये १४ सूत्र संस्कृत व्याकरण के आधार हैं।`,
-              [Language.GUJARATI]: `અધ્યાય ૧: માહેશ્વર સૂત્ર
-સંસ્કૃત વ્યાકરણના પાયારૂપ ૧૪ સૂત્રો.`,
-              [Language.ENGLISH]: `Chapter 1: Maheshwara Sutras
-The 14 foundational sutras of Sanskrit grammar.`
-            }
-          }
-        ]
-      }
-    ]
-  },
 
   // ==========================================
-  // BAMS 2nd Year (B.A.M.S. Second Prof)
+  // BAMS 2nd Year
   // ==========================================
   {
     id: 'bams2-dg',
@@ -157,7 +205,7 @@ The 14 foundational sutras of Sanskrit grammar.`
               [Language.ENGLISH]: `Chapter 1: Haritaki
 Rasa: Five tastes except Salty. Action: Mild laxative, Rejuvenative.`,
               [Language.HINDI]: `अध्याय १: हरितकी
-रस: लवण रहित पंच रस। गुण: लघु, रूक्ष। कर्म: अनुलोमन, रसायन।`
+रस: लवण रहित पंच रस. गुण: लघु, रूक्ष। कर्म: अनुलोमन, रसायन।`
             }
           }
         ]
@@ -194,39 +242,9 @@ Rasa: Five tastes except Salty. Action: Mild laxative, Rejuvenative.`,
       }
     ]
   },
-  {
-    id: 'bams2-roga',
-    title: 'Roga Nidana (રોગ નિદાન)',
-    author: 'Madhava Nidana',
-    subject: 'Pathology',
-    level: CourseLevel.UG2,
-    language: Language.GUJARATI,
-    coverImage: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=400',
-    sthanas: [
-      {
-        id: 'rn-s1',
-        title: 'Nidana Panchaka',
-        adhyayas: [
-          {
-            id: 'rn-a1',
-            number: 1,
-            title: 'Nidana Panchaka',
-            content: {
-              [Language.GUJARATI]: `અધ્યાય ૧: નિદાન પંચક
-રોગ જાણવા માટેના ૫ સાધનો: નિદાન, પૂર્વરૂપ, રૂપ, ઉપશય અને સંપ્રાપ્તિ.`,
-              [Language.ENGLISH]: `Chapter 1: Diagnostic Tools
-5 tools to diagnose disease: Etiology, Prodrome, Symptoms, Trial, Pathogenesis.`,
-              [Language.HINDI]: `अध्याय १: निदान पंचक
-रोग निर्णय के ५ साधन: निदान, पूर्वरूप, रूप, उपशय, सम्प्राप्ति।`
-            }
-          }
-        ]
-      }
-    ]
-  },
 
   // ==========================================
-  // BAMS 3rd Year (B.A.M.S. Third Prof)
+  // BAMS 3rd Year
   // ==========================================
   {
     id: 'bams3-prasuti',
@@ -288,39 +306,9 @@ Complications during dentition in children: Fever, Diarrhea.`,
       }
     ]
   },
-  {
-    id: 'bams3-swastha',
-    title: 'Swasthavritta (સ્વસ્થવૃત્ત)',
-    author: 'Dr. Mangala',
-    subject: 'Preventive Medicine',
-    level: CourseLevel.UG3,
-    language: Language.HINDI,
-    coverImage: 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&q=80&w=400',
-    sthanas: [
-      {
-        id: 'sw-s1',
-        title: 'Dinacharya',
-        adhyayas: [
-          {
-            id: 'sw-a1',
-            number: 1,
-            title: 'Daily Regimen',
-            content: {
-              [Language.HINDI]: `अध्याय १: दिनचर्या
-ब्रह्म मुहूर्त में उठना, दन्तधावन, अभ्यंग, व्यायाम।`,
-              [Language.GUJARATI]: `અધ્યાય ૧: દિનચર્યા
-બ્રહ્મ મુહૂર્તમાં જાગવું, દાતણ કરવું, તેલ માલિશ, કસરત.`,
-              [Language.ENGLISH]: `Chapter 1: Daily Routine
-Waking up in Brahma Muhurta, brushing teeth, oil massage, exercise.`
-            }
-          }
-        ]
-      }
-    ]
-  },
 
   // ==========================================
-  // BAMS 4th Year (B.A.M.S. Final Prof)
+  // BAMS 4th Year
   // ==========================================
   {
     id: 'bams4-kayachikitsa',
@@ -376,36 +364,6 @@ Fasting (Langhana) is best at the onset of fever.`,
 Description of 101 Yantras and 20 Shastras.`,
               [Language.HINDI]: `अध्याय १: यन्त्र और शस्त्र
 १०१ यन्त्र और २० शस्त्रों का वर्णन। कंकमुख यन्त्र प्रधान है।`
-            }
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'bams4-pancha',
-    title: 'Panchakarma (પંચકર્મ)',
-    author: 'Vasant Patil',
-    subject: 'Panchakarma',
-    level: CourseLevel.UG4,
-    language: Language.GUJARATI,
-    coverImage: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=400',
-    sthanas: [
-      {
-        id: 'pk-s1',
-        title: 'Vamana',
-        adhyayas: [
-          {
-            id: 'pk-a1',
-            number: 1,
-            title: 'Vamana Vidhi',
-            content: {
-              [Language.GUJARATI]: `અધ્યાય ૧: વમન કર્મ
-કફ દોષને મુખ દ્વારા બહાર કાઢવાની પ્રક્રિયા. વસંત ઋતુમાં શ્રેષ્ઠ.`,
-              [Language.ENGLISH]: `Chapter 1: Vamana
-Expulsion of Kapha through mouth. Best in Spring season.`,
-              [Language.HINDI]: `अध्याय १: वमन कर्म
-कफ दोष को मुख द्वारा बाहर निकालने की प्रक्रिया। वसन्त ऋतु में श्रेष्ठ।`
             }
           }
         ]
@@ -477,29 +435,59 @@ Structure of the cell, transport across membranes.`,
     ]
   },
   {
-    id: 'mbbs-med',
-    title: 'Harrison\'s Medicine',
-    author: 'Harrison',
-    subject: 'Internal Medicine (MBBS)',
-    level: CourseLevel.UG3,
+    id: 'mbbs-patho',
+    title: 'Robbins Pathology',
+    author: 'Robbins & Cotran',
+    subject: 'Pathology (MBBS)',
+    level: CourseLevel.UG2,
     language: Language.ENGLISH,
-    coverImage: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=400',
+    coverImage: 'https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&q=80&w=400',
     sthanas: [
       {
-        id: 'mb-med-s1',
-        title: 'Cardiology',
+        id: 'mb-pa-s1',
+        title: 'Cell Injury',
         adhyayas: [
           {
-            id: 'mb-med-a1',
+            id: 'mb-pa-a1',
             number: 1,
-            title: 'Heart Failure',
+            title: 'Cellular Adaptations',
             content: {
-              [Language.ENGLISH]: `Chapter 1: Heart Failure
-Pathophysiology, clinical presentation, and management of HF.`,
-              [Language.GUJARATI]: `અધ્યાય ૧: હાર્ટ ફેલ્યોર
-હૃદયની નિષ્ફળતાના કારણો અને સારવાર.`,
-              [Language.HINDI]: `अध्याय १: हार्ट फेलियर
-हृदय की विफलता के कारण और उपचार।`
+              [Language.ENGLISH]: `Chapter 1: Cellular Adaptations
+Hypertrophy, Hyperplasia, Atrophy, and Metaplasia explained.`,
+              [Language.GUJARATI]: `અધ્યાય ૧: કોષીય અનુકૂલન
+હાઇપરટ્રોફી, હાઇપરપ્લેસિયા, એટ્રોફી અને મેટાપ્લેસિયા.`,
+              [Language.HINDI]: `अध्याय १: कोशीय अनुकूलन
+हाइपरट्रॉफी, हाइपरप्लासिया, एट्रोफी और मेटाप्लासिया।`
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'mbbs-pharma',
+    title: 'KDT Pharmacology',
+    author: 'K.D. Tripathi',
+    subject: 'Pharmacology (MBBS)',
+    level: CourseLevel.UG2,
+    language: Language.ENGLISH,
+    coverImage: 'https://images.unsplash.com/photo-1585435557343-3b092031a831?auto=format&fit=crop&q=80&w=400',
+    sthanas: [
+      {
+        id: 'mb-phar-s1',
+        title: 'General Pharma',
+        adhyayas: [
+          {
+            id: 'mb-phar-a1',
+            number: 1,
+            title: 'Pharmacokinetics',
+            content: {
+              [Language.ENGLISH]: `Chapter 1: Pharmacokinetics
+Absorption, Distribution, Metabolism, and Excretion (ADME).`,
+              [Language.GUJARATI]: `અધ્યાય ૧: ફાર્માકોકાઈનેટિક્સ
+શોષણ, વિતરણ, ચયાપચય અને ઉત્સર્જન (ADME).`,
+              [Language.HINDI]: `अध्याय १: फार्माकोकाइनेटिक्स
+अवशोषण, वितरण, चयापचय और उत्सर्जन (ADME).`
             }
           }
         ]
@@ -540,6 +528,36 @@ The physician's high and only mission is to restore the sick to health, to cure,
       }
     ]
   },
+  {
+    id: 'bhms-materia',
+    title: 'Materia Medica',
+    author: 'William Boericke',
+    subject: 'Homeopathy',
+    level: CourseLevel.UG2,
+    language: Language.ENGLISH,
+    coverImage: 'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?auto=format&fit=crop&q=80&w=400',
+    sthanas: [
+      {
+        id: 'bh-mm-s1',
+        title: 'Remedies',
+        adhyayas: [
+          {
+            id: 'bh-mm-a1',
+            number: 1,
+            title: 'Aconitum Napellus',
+            content: {
+              [Language.ENGLISH]: `Chapter 1: Aconitum Napellus
+Keynote: Fear, Anxiety, Restlessness. Sudden onset of symptoms.`,
+              [Language.GUJARATI]: `અધ્યાય ૧: એકોનાઈટ
+મુખ્ય લક્ષણો: ડર, ચિંતા, બેચેની. લક્ષણોની અચાનક શરૂઆત.`,
+              [Language.HINDI]: `अध्याय १: एकोनाइट
+मुख्य लक्षण: डर, चिंता, बेचैनी। लक्षणों की अचानक शुरुआत।`
+            }
+          }
+        ]
+      }
+    ]
+  },
 
   // ==========================================
   // Nursing Courses
@@ -568,6 +586,36 @@ Hygiene, vital signs monitoring, and compassionate care.`,
 સ્વચ્છતા, વાઈટલ સાિન્સ અને કરુણાપૂર્ણ સંભાળ.`,
               [Language.HINDI]: `अध्याय १: रोगी की देखभाल
 स्वच्छता, वाइटल साइन्स और करुणापूर्ण देखभाल।`
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'nurs-msn',
+    title: 'Medical Surgical Nursing',
+    author: 'Brunner & Suddarth',
+    subject: 'Nursing',
+    level: CourseLevel.UG2,
+    language: Language.ENGLISH,
+    coverImage: 'https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&q=80&w=400',
+    sthanas: [
+      {
+        id: 'ns-msn-s1',
+        title: 'Perioperative Care',
+        adhyayas: [
+          {
+            id: 'ns-msn-a1',
+            number: 1,
+            title: 'Pre-operative Nursing',
+            content: {
+              [Language.ENGLISH]: `Chapter 1: Pre-operative Care
+Patient assessment, consent, and preparation for surgery.`,
+              [Language.GUJARATI]: `અધ્યાય ૧: ઓપરેશન પૂર્વેની સંભાળ
+દર્દીનું મૂલ્યાંકન, સંમતિ અને સર્જરી માટેની તૈયારી.`,
+              [Language.HINDI]: `अध्याय १: ऑपरेशन पूर्व देखभाल
+रोगी का मूल्यांकन, सहमति और सर्जरी की तैयारी।`
             }
           }
         ]
