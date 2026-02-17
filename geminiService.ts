@@ -3,6 +3,7 @@ import { FilePart, User, Book, Language, Role, Adhyaya, CustomSource, MedicalFie
 
 const getAIClient = () => {
   // The API key is now injected via vite.config.ts into process.env.API_KEY
+  // Ensure your Vercel Environment Variable is named API_KEY
   if (!process.env.API_KEY) {
     console.error("API Key is missing. Please check Vercel environment variables.");
     throw new Error("API_KEY is not configured.");
@@ -14,7 +15,7 @@ export const translateContent = async (text: string, targetLanguage: Language): 
   const ai = getAIClient();
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-2.5-flash-preview",
       contents: [{ role: 'user', parts: [{ text: `Translate the following medical text into ${targetLanguage}. Maintain clinical accuracy: \n\n${text}` }] }],
     });
     return response.text || text;
@@ -47,7 +48,7 @@ export const getBookContextResponse = async (query: string, book: Book, adhyaya:
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-2.5-flash-preview",
       contents: [{ role: 'user', parts: [{ text: `Chapter Context:\n${context}\n\nUser Question: ${query}` }] }],
       config: { systemInstruction }
     });
@@ -67,7 +68,7 @@ export const generateDailyQuote = async (userField: MedicalField): Promise<Daily
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-2.5-flash-preview",
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
       config: {
         responseMimeType: "application/json",
@@ -146,9 +147,9 @@ export const getVaidyaGuruResponse = async (
   useThinking: boolean = false
 ) => {
   const ai = getAIClient();
-  // Using gemini-3-pro-preview for thinking (deep reasoning)
-  // Using gemini-3-flash-preview for speed
-  const model = useThinking ? "gemini-3-pro-preview" : "gemini-3-flash-preview";
+  // Using gemini-2.5-flash-preview as the standard efficient model
+  // Thinking models (gemini-2.5-flash-thinking) can be used if enabled
+  const model = useThinking ? "gemini-2.5-flash-thinking" : "gemini-2.5-flash-preview";
   const systemInstruction = getPersonaPrompt(user);
 
   // Correctly structure contents with optional thinking config
@@ -171,8 +172,8 @@ export const getVaidyaGuruResponse = async (
   };
 
   if (useThinking) {
-    // Set thinking budget for Pro model
-    config.thinkingConfig = { thinkingBudget: 2048 }; 
+    // Set thinking budget if using thinking model
+    config.thinkingConfig = { thinkingBudget: 1024 }; 
   }
 
   try {
@@ -193,7 +194,7 @@ export const getStudyDeskResponse = async (query: string, books: Book[], customS
   const systemInstruction = `You are a Senior Medical Researcher. Answer based on these sources: (${sources}). User is in field: ${user.medicalField}.`;
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-2.5-flash-preview",
       contents: [{ role: 'user', parts: [{ text: query }] }],
       config: { systemInstruction }
     });
@@ -210,7 +211,7 @@ export const generatePodcastScript = async (books: Book[]) => {
   const prompt = `Create an educational medical dialogue script between two professors discussing the contents of: ${sources}.`;
   try {
     const response = await ai.models.generateContent({ 
-      model: "gemini-3-flash-preview", 
+      model: "gemini-2.5-flash-preview", 
       contents: [{ role: 'user', parts: [{ text: prompt }] }] 
     });
     return response.text || "";
@@ -263,4 +264,4 @@ export async function decodeAudioData(data: Uint8Array, ctx: AudioContext, sampl
     for (let i = 0; i < frameCount; i++) channelData[i] = dataInt16[i * numChannels + channel] / 32768.0;
   }
   return buffer;
-    }
+        }
