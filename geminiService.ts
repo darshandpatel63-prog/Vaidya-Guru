@@ -3,13 +3,14 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { FilePart, User, Book, Language, Role, Adhyaya, CustomSource, MedicalField, DailyQuote } from "./types";
 
 const getAIClient = () => {
-  // The API key is now injected via vite.config.ts into process.env.VITE_API_KEY
-  // Ensure your Vercel Environment Variable is named VITE_API_KEY
-  if (!process.env.VITE_API_KEY) {
-    console.error("API Key is missing. Please check Vercel environment variables.");
-    throw new Error("API_KEY is not configured.");
+  const apiKey = import.meta.env.VITE_API_KEY; 
+  
+  if (!apiKey) {
+    throw new Error("API_KEY missing!");
   }
-  return new GoogleGenerativeAI({ apiKey: process.env.VITE_API_KEY });
+  return new GoogleGenerativeAI(apiKey);
+};
+
 
 
 export const translateContent = async (text: string, targetLanguage: Language): Promise<string> => {
