@@ -1,6 +1,7 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Book, Language, Adhyaya, Sthana, Message } from '../types';
-import { InterstitialAd } from './BannerAd';
+import { InterstitialAd, BannerAd, BannerAdSize, TestIds } from './BannerAd';
 import { useAuth } from '../AuthContext';
 import { getBookContextResponse } from '../geminiService';
 
@@ -33,15 +34,25 @@ export const BookReader: React.FC<BookReaderProps> = ({ book, onClose }) => {
 
   const handleBack = () => {
     if (view === 'reader') {
-      InterstitialAd.show(() => {
         setView('adhyaya');
         setIsAssistantOpen(false);
         setChatMessages([]);
-      });
     } else if (view === 'adhyaya') {
       setView('sthana');
     } else {
-      onClose();
+      // Exit Book Logic - Show Interstitial Every 5th Time PER BOOK
+      const closeCountKey = `vaidyaguru_book_close_count_${book.id}`;
+      let count = parseInt(localStorage.getItem(closeCountKey) || '0', 10);
+      count++;
+      localStorage.setItem(closeCountKey, count.toString());
+
+      if (count % 5 === 0) {
+          InterstitialAd.show(() => {
+              onClose();
+          });
+      } else {
+          onClose();
+      }
     }
   };
 
@@ -80,18 +91,30 @@ export const BookReader: React.FC<BookReaderProps> = ({ book, onClose }) => {
     }
   };
 
+  const toggleLanguage = () => {
+    if (currentLanguage === Language.ENGLISH) setCurrentLanguage(Language.GUJARATI);
+    else if (currentLanguage === Language.GUJARATI) setCurrentLanguage(Language.HINDI);
+    else setCurrentLanguage(Language.ENGLISH);
+  };
+
   return (
     <div className="fixed inset-0 bg-white z-[10000] flex flex-col overflow-hidden animate-in fade-in zoom-in duration-300">
       <header className="p-4 border-b flex justify-between items-center bg-white shadow-sm z-[10001]">
-        <div className="flex items-center gap-3">
-          <button onClick={handleBack} className="p-2 hover:bg-stone-100 rounded-full transition-colors text-stone-600">
+        <div className="flex items-center gap-2 md:gap-3 flex-1 min-w-0">
+          <button onClick={handleBack} className="p-2 hover:bg-stone-100 rounded-full transition-colors text-stone-600 flex-shrink-0">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" /></svg>
           </button>
-          <h2 className="text-sm font-bold text-stone-800 serif-font truncate max-w-[150px]">{book.title}</h2>
+          <h2 className="text-sm font-bold text-stone-800 serif-font truncate">{book.title}</h2>
         </div>
 
         {view === 'reader' && (
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
+            {/* Language Switcher */}
+            <button onClick={toggleLanguage} className="px-3 py-1.5 bg-stone-100 rounded-lg text-xs font-bold text-stone-700 hover:bg-stone-200 border border-stone-200 flex items-center gap-1">
+              <span>🌐</span>
+              <span>{currentLanguage === Language.ENGLISH ? 'EN' : currentLanguage === Language.GUJARATI ? 'GU' : 'HI'}</span>
+            </button>
+
             <div className="hidden sm:flex items-center gap-2 bg-stone-100 p-1 rounded-full">
               {(['yellow', 'green', 'blue'] as HighlightColor[]).map(c => (
                 <button key={c} onClick={() => setActiveColor(c)} className={`w-6 h-6 rounded-full border-2 transition-all ${activeColor === c ? 'border-stone-800 scale-110 shadow-sm' : 'border-transparent opacity-50'} ${getHighlightClass(c)}`} />
@@ -104,13 +127,14 @@ export const BookReader: React.FC<BookReaderProps> = ({ book, onClose }) => {
           </div>
         )}
 
-        <button onClick={onClose} className="p-2 text-stone-400"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" /></svg></button>
+        <button onClick={onClose} className="p-2 text-stone-400 ml-2 flex-shrink-0"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" /></svg></button>
       </header>
 
       <div className="flex-1 flex overflow-hidden bg-stone-50">
         <div className={`flex-1 overflow-y-auto no-scrollbar transition-all duration-500 ${isAssistantOpen ? 'hidden lg:block' : 'block'}`}>
           {view === 'sthana' && (
             <div className="max-w-2xl mx-auto p-8 space-y-4">
+              <BannerAd unitId={TestIds.BANNER} size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER} />
               {book.sthanas.map(s => (
                 <button key={s.id} onClick={() => { setSelectedSthana(s); setView('adhyaya'); }} className="w-full p-6 bg-white rounded-3xl border shadow-sm hover:border-green-800 text-left transition-all active:scale-95">
                   <h4 className="font-bold text-stone-800">{s.title}</h4>
@@ -122,6 +146,7 @@ export const BookReader: React.FC<BookReaderProps> = ({ book, onClose }) => {
 
           {view === 'adhyaya' && selectedSthana && (
             <div className="max-w-2xl mx-auto p-8 space-y-3">
+               <BannerAd unitId={TestIds.BANNER} size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER} />
                {selectedSthana.adhyayas.map(a => (
                  <button key={a.id} onClick={() => { setCurrentAdhyaya(a); setView('reader'); }} className="w-full p-5 bg-white rounded-2xl border flex items-center gap-4 hover:shadow-md transition-all text-left active:scale-95">
                     <div className="w-10 h-10 bg-stone-100 rounded-lg flex items-center justify-center font-black text-stone-400">{a.number}</div>
@@ -139,12 +164,16 @@ export const BookReader: React.FC<BookReaderProps> = ({ book, onClose }) => {
               </div>
 
               <article className="prose prose-stone max-w-none text-[#1a1a1a] leading-relaxed text-xl serif-font">
-                {currentAdhyaya.content[currentLanguage]?.split('\n').map((line, idx) => (
+                {(currentAdhyaya.content[currentLanguage] || "Content not available in this language.").split('\n').map((line, idx) => (
                   <p key={idx} onClick={() => toggleHighlight(idx)} className={`mb-6 cursor-pointer transition-colors p-1 rounded ${highlights.has(idx) ? getHighlightClass(highlights.get(idx)) : 'hover:bg-stone-100'}`}>
                     {line}
                   </p>
                 ))}
               </article>
+              
+              <div className="mt-12">
+                 <BannerAd unitId={TestIds.BANNER} size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER} />
+              </div>
             </div>
           )}
         </div>
@@ -205,4 +234,3 @@ export const BookReader: React.FC<BookReaderProps> = ({ book, onClose }) => {
     </div>
   );
 };
-                                                                                     
