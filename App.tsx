@@ -1,4 +1,4 @@
-  import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { VaidyaGuru } from './components/VaidyaGuru';
 import { BookReader } from './components/BookReader';
 import { Profile } from './components/Profile';
@@ -8,11 +8,11 @@ import { ExamPortal } from './components/ExamPortal';
 import { Scheduler } from './components/Scheduler';
 import { AdminPanel } from './components/AdminPanel';
 import { DoctorConnect } from './components/DoctorConnect';
-import { MaterialLibrary } from './components/MaterialLibrary'; // Import new component
+import { MaterialLibrary } from './components/MaterialLibrary';
 import { MOCK_BOOKS } from './constants';
 import { Book, User, CourseLevel, Language, Role, Gender, MedicalField, DailyQuote } from './types';
 import { AuthProvider, useAuth } from './AuthContext';
-import { BannerAd, BannerAdSize, TestIds, InterstitialAd, RewardedAd } from './components/BannerAd';
+import { BannerAd, BannerAdSize, TestIds, RewardedAd } from './components/BannerAd';
 import { generateDailyQuote, checkFestiveTheme } from './geminiService';
 
 // Text constants
@@ -159,7 +159,6 @@ const MainApp: React.FC = () => {
   const { user, loading: authLoading } = useAuth();
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   
-  // Updated ActiveTab type to include new features
   const [activeTab, setActiveTab] = useState<'library' | 'guru' | 'desk' | 'board' | 'exam' | 'schedule' | 'connect' | 'admin' | 'profile' | 'material'>('library');
   
   const [search, setSearch] = useState('');
@@ -178,21 +177,21 @@ const MainApp: React.FC = () => {
     }
   }, [user]);
 
-  // Handle Book Click with 2-Hour Unlock Logic
+  // Handle Book Click with GLOBAL 3-Hour Unlock Logic for ALL books
   const handleBookClick = (book: Book) => {
-    const STORAGE_KEY_PREFIX = 'vaidyaguru_book_unlock_';
-    const unlockKey = `${STORAGE_KEY_PREFIX}${book.id}`;
-    const unlockedTime = localStorage.getItem(unlockKey);
+    // Global key for ALL books
+    const GLOBAL_UNLOCK_KEY = 'vaidyaguru_global_books_unlocked_timestamp';
+    const unlockedTime = localStorage.getItem(GLOBAL_UNLOCK_KEY);
     const now = Date.now();
-    const TWO_HOURS = 2 * 60 * 60 * 1000;
+    const THREE_HOURS = 3 * 60 * 60 * 1000; // 3 hours in milliseconds
 
-    // Check if book is already unlocked and within valid time window
-    if (unlockedTime && (now - parseInt(unlockedTime, 10) < TWO_HOURS)) {
+    // Check if GLOBAL unlock is valid
+    if (unlockedTime && (now - parseInt(unlockedTime, 10) < THREE_HOURS)) {
       setSelectedBook(book);
     } else {
-      // Show Rewarded Ad to unlock
+      // Show Rewarded Ad to unlock ALL books for 3 hours
       RewardedAd.show(() => {
-        localStorage.setItem(unlockKey, now.toString());
+        localStorage.setItem(GLOBAL_UNLOCK_KEY, now.toString());
         setSelectedBook(book);
       });
     }
@@ -340,4 +339,3 @@ const MainApp: React.FC = () => {
 
 const App: React.FC = () => <AuthProvider><MainApp /></AuthProvider>;
 export default App;
-            
