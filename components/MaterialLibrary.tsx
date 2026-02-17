@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { MOCK_MATERIALS } from '../constants';
 import { MaterialType, StudyMaterial, User, Language } from '../types';
-import { InterstitialAd } from './BannerAd';
+import { InterstitialAd, RewardedAd, BannerAd, BannerAdSize, TestIds } from './BannerAd';
 
 export const MaterialLibrary: React.FC<{ user: User }> = ({ user }) => {
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
@@ -69,14 +69,28 @@ export const MaterialLibrary: React.FC<{ user: User }> = ({ user }) => {
   };
 
   const openLink = (url: string) => {
-    window.open(url, '_blank');
+    // GLOBAL unlock key for ALL materials
+    const GLOBAL_MAT_KEY = 'vaidyaguru_global_material_unlock';
+    const unlockedTime = localStorage.getItem(GLOBAL_MAT_KEY);
+    const now = Date.now();
+    const ONE_POINT_FIVE_HOURS = 1.5 * 60 * 60 * 1000; // 1.5 hours
+
+    if (unlockedTime && (now - parseInt(unlockedTime, 10) < ONE_POINT_FIVE_HOURS)) {
+       window.open(url, '_blank');
+    } else {
+       RewardedAd.show(() => {
+          localStorage.setItem(GLOBAL_MAT_KEY, now.toString());
+          window.open(url, '_blank');
+       });
+    }
   };
 
   // 1. View: Subject Selection
   if (!selectedSubject) {
     return (
       <div className="p-6">
-        <h2 className="text-3xl font-bold serif-font text-stone-800 mb-2">{t.title}</h2>
+        <BannerAd unitId={TestIds.BANNER} size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER} />
+        <h2 className="text-3xl font-bold serif-font text-stone-800 mb-2 mt-4">{t.title}</h2>
         <p className="text-stone-500 mb-8">{t.desc}</p>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -97,6 +111,9 @@ export const MaterialLibrary: React.FC<{ user: User }> = ({ user }) => {
               </p>
             </button>
           ))}
+        </div>
+        <div className="mt-8">
+           <BannerAd unitId={TestIds.BANNER} size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER} />
         </div>
       </div>
     );
@@ -125,6 +142,9 @@ export const MaterialLibrary: React.FC<{ user: User }> = ({ user }) => {
                </button>
             ))}
          </div>
+         <div className="mt-8">
+             <BannerAd unitId={TestIds.BANNER} size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER} />
+         </div>
       </div>
     );
   }
@@ -141,6 +161,10 @@ export const MaterialLibrary: React.FC<{ user: User }> = ({ user }) => {
             <h2 className="text-2xl font-bold serif-font text-stone-800">{getLabel(selectedType)}</h2>
             <p className="text-xs text-stone-400 font-bold uppercase">{selectedSubject}</p>
          </div>
+      </div>
+      
+      <div className="mb-4">
+         <BannerAd unitId={TestIds.BANNER} size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER} />
       </div>
 
       {filteredMaterials.length === 0 ? (
@@ -175,6 +199,10 @@ export const MaterialLibrary: React.FC<{ user: User }> = ({ user }) => {
            ))}
         </div>
       )}
+      
+      <div className="mt-8">
+         <BannerAd unitId={TestIds.BANNER} size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER} />
+      </div>
     </div>
   );
 };
