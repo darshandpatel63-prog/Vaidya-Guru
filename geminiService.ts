@@ -1,22 +1,20 @@
-
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI, Type, Modality } from "@google/genai";
 import { FilePart, User, Book, Language, Role, Adhyaya, CustomSource, MedicalField, DailyQuote } from "./types";
 
 const getAIClient = () => {
-  const apiKey = import.meta.env.VITE_API_KEY; 
-  
-  if (!apiKey) {
-    throw new Error("API_KEY missing!");
+  // The API key is now injected via vite.config.ts into process.env.API_KEY
+  if (!process.env.API_KEY) {
+    console.error("API Key is missing. Please check Vercel environment variables.");
+    throw new Error("API_KEY is not configured.");
   }
-  return new GoogleGenerativeAI(apiKey);
+  return new GoogleGenAI({ apiKey: process.env.API_KEY });
 };
-
 
 export const translateContent = async (text: string, targetLanguage: Language): Promise<string> => {
   const ai = getAIClient();
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-1.5-flash",
+      model: "gemini-3-flash-preview",
       contents: [{ role: 'user', parts: [{ text: `Translate the following medical text into ${targetLanguage}. Maintain clinical accuracy: \n\n${text}` }] }],
     });
     return response.text || text;
@@ -49,12 +47,13 @@ export const getBookContextResponse = async (query: string, book: Book, adhyaya:
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-1.5-flash",
+      model: "gemini-3-flash-preview",
       contents: [{ role: 'user', parts: [{ text: `Chapter Context:\n${context}\n\nUser Question: ${query}` }] }],
       config: { systemInstruction }
     });
     return response.text || "I apologize, I cannot generate an answer at this moment.";
   } catch (error) {
+    console.error("Book Context Error:", error);
     return "Error connecting to the knowledge base.";
   }
 };
@@ -68,7 +67,7 @@ export const generateDailyQuote = async (userField: MedicalField): Promise<Daily
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-1.5-flash",
+      model: "gemini-3-flash-preview",
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
       config: {
         responseMimeType: "application/json",
@@ -93,6 +92,7 @@ export const generateDailyQuote = async (userField: MedicalField): Promise<Daily
     const data = JSON.parse(response.text || "{}");
     return { ...data, date: dateStr };
   } catch (error) {
+    console.error("Quote Error:", error);
     return {
       original: "Health is the greatest wealth.",
       translations: {
@@ -108,12 +108,15 @@ export const generateDailyQuote = async (userField: MedicalField): Promise<Daily
 export const generateAyurvedicImage = async (prompt: string): Promise<string | undefined> => {
   const ai = getAIClient();
   try {
+    // Using the dedicated image generation model
     const response = await ai.models.generateContent({
-      model: 'gemini-1.5-flash-image',
+      model: 'gemini-2.5-flash-image',
       contents: {
         parts: [{ text: `High-quality clinical illustration of: ${prompt}. Professional medical educational style.` }],
       },
     });
+    
+    // Iterate to find image part
     for (const part of response.candidates?.[0]?.content?.parts || []) {
       if (part.inlineData) {
         return `data:image/png;base64,${part.inlineData.data}`;
@@ -143,18 +146,45 @@ export const getVaidyaGuruResponse = async (
   useThinking: boolean = false
 ) => {
   const ai = getAIClient();
-  const model = useThinking ? "gemini-1.5-flash" : "gemini-3-flash-preview";
+  // Using gemini-3-pro-preview for thinking (deep reasoning)
+  // Using gemini-3-flash-preview for speed
+  const model = useThinking ? "gemini-3-pro-preview" : "gemini-3-flash-preview";
   const systemInstruction = getPersonaPrompt(user);
 
+  // Correctly structure contents with optional thinking config
   const contents = [
     ...history, 
-    { role: 'user', parts: [{ text: `User query: ${prompt}` }, ...attachments.map(att => ({ inlineData: { mimeType: att.mimeType, data: att.data } }))] }
+    { 
+      role: 'user', 
+      parts: [
+        { text: `User query: ${prompt}` }, 
+        ...attachments.map(att => ({ 
+          inlineData: { mimeType: att.mimeType, data: att.data } 
+        }))
+      ] 
+    }
   ];
 
+  const config: any = { 
+    systemInstruction,
+    tools: [{ googleSearch: {} }] // Enable Google Search grounding
+  };
+
+  if (useThinking) {
+    // Set thinking budget for Pro model
+    config.thinkingConfig = { thinkingBudget: 2048 }; 
+  }
+
   try {
-    const response = await ai.models.generateContent({ model, contents, config: { systemInstruction, tools: [{ googleSearch: {} }] } });
-    return { text: response.text || "I am processing your clinical query.", grounding: response.candidates?.[0]?.groundingMetadata?.groundingChunks || [] };
-  } catch (error: any) { throw error; }
+    const response = await ai.models.generateContent({ model, contents, config });
+    return { 
+      text: response.text || "I am processing your clinical query.", 
+      grounding: response.candidates?.[0]?.groundingMetadata?.groundingChunks || [] 
+    };
+  } catch (error: any) { 
+    console.error("Chat Error:", error);
+    throw error; 
+  }
 };
 
 export const getStudyDeskResponse = async (query: string, books: Book[], customSources: CustomSource[], user: User) => {
@@ -163,12 +193,15 @@ export const getStudyDeskResponse = async (query: string, books: Book[], customS
   const systemInstruction = `You are a Senior Medical Researcher. Answer based on these sources: (${sources}). User is in field: ${user.medicalField}.`;
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-1.5-flash",
+      model: "gemini-3-flash-preview",
       contents: [{ role: 'user', parts: [{ text: query }] }],
       config: { systemInstruction }
     });
     return response.text || "Synthesis unavailable.";
-  } catch (error) { return "Synthesis unavailable."; }
+  } catch (error) { 
+    console.error("Study Desk Error:", error);
+    return "Synthesis unavailable."; 
+  }
 };
 
 export const generatePodcastScript = async (books: Book[]) => {
@@ -176,21 +209,33 @@ export const generatePodcastScript = async (books: Book[]) => {
   const sources = books.map(b => b.title).join(", ");
   const prompt = `Create an educational medical dialogue script between two professors discussing the contents of: ${sources}.`;
   try {
-    const response = await ai.models.generateContent({ model: "gemini-3-flash-preview", contents: [{ role: 'user', parts: [{ text: prompt }] }] });
+    const response = await ai.models.generateContent({ 
+      model: "gemini-3-flash-preview", 
+      contents: [{ role: 'user', parts: [{ text: prompt }] }] 
+    });
     return response.text || "";
-  } catch (error) { return ""; }
+  } catch (error) { 
+    console.error("Script Gen Error:", error);
+    return ""; 
+  }
 };
 
 export const generateSpeech = async (text: string, voice: 'Kore' | 'Puck' = 'Kore') => {
   const ai = getAIClient();
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-1.5-flash-preview-tts",
+      model: "gemini-2.5-flash-preview-tts",
       contents: [{ parts: [{ text }] }],
-      config: { responseModalities: [Modality.AUDIO], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } } },
+      config: { 
+        responseModalities: [Modality.AUDIO], 
+        speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } } 
+      },
     });
     return response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-  } catch (error) { throw error; }
+  } catch (error) { 
+    console.error("TTS Error:", error);
+    throw error; 
+  }
 };
 
 export function encode(bytes: Uint8Array) {
@@ -218,4 +263,4 @@ export async function decodeAudioData(data: Uint8Array, ctx: AudioContext, sampl
     for (let i = 0; i < frameCount; i++) channelData[i] = dataInt16[i * numChannels + channel] / 32768.0;
   }
   return buffer;
-}
+    }
