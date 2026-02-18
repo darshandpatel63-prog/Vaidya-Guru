@@ -332,12 +332,23 @@ export const Profile: React.FC = () => {
             </div>
          </div>
 
-         <div className="text-center pb-10">
+                  <div className="text-center pb-10">
             <p className="text-xs text-stone-400">
-                <a href="#" className="hover:underline">Privacy Policy</a> • <a href="#" className="hover:underline">Terms of Service</a>
+                {/* અહીં આપણે લિંક બદલી છે */}
+                <a 
+                  href="/privacy.html" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="hover:underline"
+                >
+                  Privacy Policy
+                </a> 
+                {' • '} 
+                <a href="#" className="hover:underline">Terms of Service</a>
             </p>
             <p className="text-xs text-stone-400 mt-2">VaidyaGuru ID: {user.id}</p>
          </div>
+
 
       </div>
     </div>
