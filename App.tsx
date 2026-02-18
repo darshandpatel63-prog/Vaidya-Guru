@@ -9,6 +9,8 @@ import { Scheduler } from './components/Scheduler';
 import { AdminPanel } from './components/AdminPanel';
 import { DoctorConnect } from './components/DoctorConnect';
 import { MaterialLibrary } from './components/MaterialLibrary';
+import { PrivacyPolicy }from './components/PrivacyPolicy';
+
 import { MOCK_BOOKS } from './constants';
 import { Book, User, CourseLevel, Language, Role, Gender, MedicalField, DailyQuote } from './types';
 import { AuthProvider, useAuth } from './AuthContext';
