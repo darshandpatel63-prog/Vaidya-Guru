@@ -1,22 +1,21 @@
 import React, { useState, useEffect } from 'react';
-// import { VaidyaGuru } from './components/VaidyaGuru';
+import { VaidyaGuru } from './components/VaidyaGuru';
 import { BookReader } from './components/BookReader';
 import { Profile } from './components/Profile';
 import { StudyDesk } from './components/StudyDesk';
-// import { BulletinBoard } from './components/BulletinBoard';
+import { BulletinBoard } from './components/BulletinBoard';
 import { ExamPortal } from './components/ExamPortal';
 import { Scheduler } from './components/Scheduler';
 import { AdminPanel } from './components/AdminPanel';
-// import { DoctorConnect } from './components/DoctorConnect';
+import { DoctorConnect } from './components/DoctorConnect';
 import { MaterialLibrary } from './components/MaterialLibrary';
-import PrivacyPolicy from './components/PrivacyPolicy';
-import { LandingPage } from './pages/LandingPage';
+import  PrivacyPolicy from './components/PrivacyPolicy';
 
 import { MOCK_BOOKS } from './constants';
 import { Book, User, CourseLevel, Language, Role, Gender, MedicalField, DailyQuote } from './types';
 import { AuthProvider, useAuth } from './AuthContext';
 import { BannerAd, BannerAdSize, TestIds, RewardedAd } from './components/BannerAd';
-// import { generateDailyQuote, checkFestiveTheme } from './geminiService';
+import { generateDailyQuote, checkFestiveTheme } from './geminiService';
 
 // Text constants
 const UI_TEXT = {
@@ -160,19 +159,16 @@ const OnboardingFlow: React.FC = () => {
 
 const MainApp: React.FC = () => {
   const { user, loading: authLoading } = useAuth();
-  const [showLanding, setShowLanding] = useState(true);
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
-  const [activeTab, setActiveTab] = useState<'library' | 'desk' | 'exam' | 'schedule' | 'admin' | 'profile' | 'material' | 'privacy'>('library');
+  
+  const [activeTab, setActiveTab] = useState<'library' | 'guru' | 'desk' | 'board' | 'exam' | 'schedule' | 'connect' | 'admin' | 'profile' | 'material'>('library');
   
   const [search, setSearch] = useState('');
-  
-  // મેં ખાલી state રાખ્યા છે, પણ AI ફંક્શન કોલ બંધ કર્યા છે.
   const [quote, setQuote] = useState<DailyQuote | null>(null);
   const [festive, setFestive] = useState<{ theme: string, title: string } | null>(null);
 
+  // Load dynamic content on startup
   useEffect(() => {
-    // AI કોલ હાઈડ કર્યા છે, ભવિષ્ય માટે એમનામ રાખ્યા છે.
-    /*
     if (user && user.isProfileComplete) {
       generateDailyQuote(user.medicalField)
         .then(q => setQuote(q))
@@ -181,18 +177,21 @@ const MainApp: React.FC = () => {
         .then(f => setFestive(f))
         .catch(e => console.error("Festive error", e));
     }
-    */
   }, [user]);
 
+  // Handle Book Click with GLOBAL 3-Hour Unlock Logic for ALL books
   const handleBookClick = (book: Book) => {
+    // Global key for ALL books
     const GLOBAL_UNLOCK_KEY = 'vaidyaguru_global_books_unlocked_timestamp';
     const unlockedTime = localStorage.getItem(GLOBAL_UNLOCK_KEY);
     const now = Date.now();
-    const THREE_HOURS = 3 * 60 * 60 * 1000;
+    const THREE_HOURS = 3 * 60 * 60 * 1000; // 3 hours in milliseconds
 
+    // Check if GLOBAL unlock is valid
     if (unlockedTime && (now - parseInt(unlockedTime, 10) < THREE_HOURS)) {
       setSelectedBook(book);
     } else {
+      // Show Rewarded Ad to unlock ALL books for 3 hours
       RewardedAd.show(() => {
         localStorage.setItem(GLOBAL_UNLOCK_KEY, now.toString());
         setSelectedBook(book);
@@ -200,7 +199,6 @@ const MainApp: React.FC = () => {
     }
   };
 
-  if (showLanding) return <LandingPage onEnter={() => setShowLanding(false)} />;
   if (authLoading) return <div className="min-h-screen flex items-center justify-center bg-stone-50"><div className="flex flex-col items-center gap-4"><div className="w-10 h-10 border-4 border-green-900 border-t-transparent rounded-full animate-spin"></div><p className="font-bold serif-font text-stone-500">Loading Wisdom...</p></div></div>;
   if (!user || !user.isProfileComplete) return <OnboardingFlow />;
 
@@ -211,18 +209,24 @@ const MainApp: React.FC = () => {
   const themeColor = isBAMS ? 'text-green-900 border-green-800' : 'text-blue-900 border-blue-800';
   const themeBg = isBAMS ? 'bg-green-900' : 'bg-blue-900';
 
+  // Navigation Items
   const navItems = [
     { id: 'library', label: t.lib, icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /> },
-    { id: 'material', label: t.material, icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z" /> },
+    { id: 'material', label: t.material, icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z" /> }, // New Icon for Material
+    { id: 'guru', label: t.guru, icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /> },
     { id: 'desk', label: t.desk, icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /> },
+    { id: 'board', label: t.board, icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /> },
     { id: 'exam', label: t.exam, icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /> },
     { id: 'schedule', label: t.schedule, icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /> },
+    { id: 'connect', label: t.connect, icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /> },
     { id: 'admin', label: t.admin, icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /> },
-    { id: 'privacy', label: "Privacy", icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /> }
+    { id: 'privacy', label: "Privacy", icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /> },
+
   ];
 
   return (
     <div className="min-h-screen flex flex-col bg-stone-50 transition-colors duration-500">
+      {/* Festive Banner */}
       {festive && (
         <div className="fixed top-0 left-0 right-0 z-[100] pointer-events-none p-4 flex justify-center">
            <div className="bg-amber-100/95 backdrop-blur px-6 py-2 rounded-full border border-amber-200 shadow-lg flex items-center gap-3 animate-in slide-in-from-top duration-500">
@@ -233,12 +237,14 @@ const MainApp: React.FC = () => {
         </div>
       )}
       
+      {/* Header */}
       <header className="bg-white/90 backdrop-blur-md border-b p-4 sticky top-0 z-50 flex justify-between items-center shadow-sm">
         <div className="flex items-center gap-3">
           <img src="assets/logo.png" className="w-10 h-10 object-contain" alt="" />
           <h1 className={`font-bold serif-font text-xl hidden sm:block ${themeColor}`}>VaidyaGuru</h1>
         </div>
         
+        {/* Desktop Navigation */}
         <div className="hidden lg:flex gap-2 overflow-x-auto no-scrollbar max-w-2xl">
           {navItems.map(item => (
             <button key={item.id} onClick={() => setActiveTab(item.id as any)} className={`text-[11px] font-black uppercase tracking-widest px-4 py-2 transition-all rounded-full whitespace-nowrap ${activeTab === item.id ? themeBg + ' text-white shadow-md' : 'text-stone-400 hover:bg-stone-100'}`}>
@@ -250,6 +256,7 @@ const MainApp: React.FC = () => {
           </button>
         </div>
 
+        {/* Mobile Navigation - Scrollable List */}
         <div className="lg:hidden w-full overflow-x-auto no-scrollbar flex gap-2 pl-4">
             {navItems.map(item => (
               <button key={item.id} onClick={() => setActiveTab(item.id as any)} className={`flex-shrink-0 p-2 rounded-xl transition-all ${activeTab === item.id ? themeBg + ' text-white shadow-md' : 'text-stone-400 bg-stone-100'}`}>
@@ -262,10 +269,12 @@ const MainApp: React.FC = () => {
         </div>
       </header>
 
+      {/* Main Content Area */}
       <main className="flex-1 max-w-7xl mx-auto w-full pb-32 overflow-y-auto no-scrollbar scroll-smooth">
         
         {activeTab === 'library' && (
           <div className="space-y-6 animate-in fade-in duration-500 pt-4">
+            {/* Daily Quote Card */}
             {quote && (
               <div className={`${themeBg} text-white p-6 md:p-10 rounded-[2rem] md:rounded-[2.5rem] shadow-xl relative overflow-hidden group mx-4 transition-all hover:shadow-2xl`}>
                 <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 blur-3xl rounded-full -mr-10 -mt-10"></div>
@@ -282,13 +291,15 @@ const MainApp: React.FC = () => {
               </div>
             )}
             
+            {/* Search Bar */}
             <div className="px-4 sticky top-0 z-40 py-2">
               <div className="relative">
                  <input type="text" placeholder={t.searchPlaceholder} className="w-full p-4 pl-12 rounded-[1.5rem] border-2 border-stone-100 outline-none focus:border-stone-400 shadow-sm bg-white/90 backdrop-blur font-medium transition-all focus:shadow-md" value={search} onChange={e => setSearch(e.target.value)} />
-                 <svg className="w-5 h-5 text-stone-400 absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                 <svg className="w-5 h-5 text-stone-400 absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
               </div>
             </div>
             
+            {/* Book Grid */}
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 px-4 pb-24">
               {filteredBooks.map((book) => (
                 <div key={book.id} onClick={() => handleBookClick(book)} className="bg-white rounded-[1.5rem] overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer border border-stone-100 group">
@@ -298,4 +309,39 @@ const MainApp: React.FC = () => {
                        <span className="text-white text-xs font-bold">Read Now</span>
                     </div>
                   </div>
-    
+                  <div className="p-4">
+                    <p className={`text-[9px] font-black uppercase tracking-widest mb-1 ${themeColor}`}>{book.subject}</p>
+                    <h3 className="font-bold text-sm text-stone-800 line-clamp-2 serif-font leading-tight">{book.title}</h3>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        
+        {activeTab === 'guru' && <VaidyaGuru user={user} />}
+        {activeTab === 'desk' && <StudyDesk user={user} />}
+        {activeTab === 'board' && <BulletinBoard user={user} />}
+        {activeTab === 'exam' && <ExamPortal user={user} />}
+        {activeTab === 'schedule' && <Scheduler user={user} />}
+        {activeTab === 'connect' && <DoctorConnect user={user} />}
+        {activeTab === 'admin' && <AdminPanel user={user} />}
+        {activeTab === 'material' && <MaterialLibrary user={user} />}
+        {activeTab === 'profile' && <Profile />}
+        {activeTab === 'privacy' && <PrivacyPolicy />}
+        
+      </main>
+
+      {/* Bottom Ad Banner */}
+      <div className="fixed bottom-0 left-0 right-0 z-[60] bg-white border-t p-1 shadow-[0_-5px_15px_rgba(0,0,0,0.05)]">
+        <BannerAd unitId={TestIds.BANNER} size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER} />
+      </div>
+
+      {/* Book Reader Overlay */}
+      {selectedBook && <BookReader book={selectedBook} onClose={() => setSelectedBook(null)} />}
+    </div>
+  );
+};
+
+const App: React.FC = () => <AuthProvider><MainApp /></AuthProvider>;
+export default App;
