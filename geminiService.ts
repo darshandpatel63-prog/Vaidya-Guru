@@ -1,18 +1,20 @@
+// આ ફાઈલ ગુગલ જેમિની (Google Gemini AI) સાથે વાતચીત કરવાનું કામ કરે છે.
+// આપણે AI ને સૂચના (Prompt) આપી છે કે તે માત્ર 'વૈદ્યગુરુ' તરીકે જ વર્તે અને 
+// આયુર્વેદ, શ્લોકો અને સંસ્કૃત ટર્મિનોલોજીનો જ ઉપયોગ કરે.
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { FilePart, User, Book, Language, Role, Adhyaya, CustomSource, MedicalField, DailyQuote } from "./types";
+import { FilePart, User, Book, Language, Adhyaya, CustomSource, DailyQuote } from "./types";
 
+// API કી મેળવવાનું ફંક્શન
 const getAIClient = () => {
   const apiKey = import.meta.env.VITE_API_KEY; 
-  
   if (!apiKey) {
     throw new Error("API_KEY missing!");
   }
   return new GoogleGenerativeAI(apiKey);
 };
 
-
-
+// ભાષાંતર કરવા માટે
 export const translateContent = async (text: string, targetLanguage: Language): Promise<string> => {
   const ai = getAIClient();
   try {
@@ -27,26 +29,17 @@ export const translateContent = async (text: string, targetLanguage: Language): 
   }
 };
 
-const getPersonaPrompt = (user: User) => {
-  switch (user.medicalField) {
-    case MedicalField.BAMS:
-      return "You are 'VaidyaGuru', an elite Ayurvedic Acharya. Use Sanskrit Shlokas where relevant, explain Doshas, Dhatus, and traditional treatments. Respond with a mix of Gujarati and English. Start with 'Jay Dhanvantari 🙏'.";
-    case MedicalField.MBBS:
-      return "You are a 'Senior Clinical Consultant'. Focus on modern medicine, evidence-based research, pathology, and anatomy. Do NOT use Shlokas. Use clinical terminology. Respond with a mix of Gujarati and English. Start with 'Clinical Update: 👋'.";
-    case MedicalField.BHMS:
-      return "You are a 'Homeopathic Research Specialist'. Focus on the Organon of Medicine and Materia Medica. Respond with a mix of Gujarati and English. Start with 'Similia Similibus Curentur 🙏'.";
-    case MedicalField.PHARMACY:
-      return "You are a 'Pharmacology Expert'. Focus on drug interactions, pharmacokinetics, and pharmaceutical chemistry. Start with 'Pharm-Insight: 🧪'.";
-    default:
-      return `You are a professional medical assistant specialized in ${user.medicalField}. Provide accurate and helpful information based on current standards.`;
-  }
+// AI નું વ્યક્તિત્વ (Persona) હવે ૧૦૦% આયુર્વેદિક જ રહેશે
+const getPersonaPrompt = () => {
+  return "You are 'VaidyaGuru', an elite Ayurvedic Acharya and clinical expert. Always use relevant Sanskrit Shlokas from texts like Charaka Samhita, Sushruta Samhita, or Ashtanga Hridaya. Explain concepts using Tridosha, Saptadhatu, and Panchamahabhuta theories. Respond with a mix of Gujarati and English. Always speak the absolute truth based on Ayurvedic principles. Start your response with 'Jay Dhanvantari 🙏'.";
 };
 
+// બુક રીડરમાં AI ને પ્રશ્ન પૂછવા માટે
 export const getBookContextResponse = async (query: string, book: Book, adhyaya: Adhyaya, user: User): Promise<string> => {
   const ai = getAIClient();
   const context = adhyaya.content[user.preferredLanguage] || adhyaya.content[Language.ENGLISH] || adhyaya.content[Language.GUJARATI] || "";
-  const persona = getPersonaPrompt(user);
-  const systemInstruction = `${persona} You are helping the user study "${book.title}", Chapter ${adhyaya.number}: "${adhyaya.title}". Use the provided chapter context.`;
+  const persona = getPersonaPrompt();
+  const systemInstruction = `${persona} You are helping an Ayurveda Scholar study "${book.title}", Chapter ${adhyaya.number}: "${adhyaya.title}". Use the provided chapter context to answer exactly.`;
 
   try {
     const response = await ai.models.generateContent({
@@ -54,18 +47,17 @@ export const getBookContextResponse = async (query: string, book: Book, adhyaya:
       contents: [{ role: 'user', parts: [{ text: `Chapter Context:\n${context}\n\nUser Question: ${query}` }] }],
       config: { systemInstruction }
     });
-    return response.text || "I apologize, I cannot generate an answer at this moment.";
+    return response.text || "હું અત્યારે જવાબ આપી શકું તેમ નથી. કૃપા કરીને ફરી પ્રયાસ કરો.";
   } catch (error) {
-    return "Error connecting to the knowledge base.";
+    return "જ્ઞાન ભંડાર સાથે કનેક્ટ થવામાં ભૂલ આવી રહી છે.";
   }
 };
 
-export const generateDailyQuote = async (userField: MedicalField): Promise<DailyQuote> => {
+// રોજનો સુવિચાર (હવે માત્ર આયુર્વેદિક શ્લોક જ આવશે)
+export const generateDailyQuote = async (): Promise<DailyQuote> => {
   const ai = getAIClient();
   const dateStr = new Date().toISOString().split('T')[0];
-  const prompt = userField === MedicalField.BAMS 
-    ? "Generate a meaningful Sanskrit Shloka from Charaka Samhita with translations in English, Gujarati, and Hindi. Return as JSON."
-    : "Generate a medical clinical fact (anatomy, physiology or pathology) with translations in English, Gujarati, and Hindi. Return as JSON.";
+  const prompt = "Generate a highly meaningful and authentic Sanskrit Shloka from an Ayurvedic Granth (like Charaka or Ashtanga Hridaya) related to health, mind, or life. Provide its exact translations in English, Gujarati, and Hindi. Return as strict JSON format.";
 
   try {
     const response = await ai.models.generateContent({
@@ -73,46 +65,32 @@ export const generateDailyQuote = async (userField: MedicalField): Promise<Daily
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
       config: {
         responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            original: { type: Type.STRING },
-            translations: {
-              type: Type.OBJECT,
-              properties: {
-                [Language.ENGLISH]: { type: Type.STRING },
-                [Language.GUJARATI]: { type: Type.STRING },
-                [Language.HINDI]: { type: Type.STRING }
-              },
-              required: [Language.ENGLISH, Language.GUJARATI, Language.HINDI]
-            }
-          },
-          required: ["original", "translations"]
-        }
       }
     });
     const data = JSON.parse(response.text || "{}");
     return { ...data, date: dateStr };
   } catch (error) {
+    // જો ભૂલ આવે તો આ ડીફોલ્ટ શ્લોક દેખાશે
     return {
-      original: "Health is the greatest wealth.",
+      original: "स्वस्थस्य स्वास्थ्यरक्षणमातुरस्य विकारप्रशमनं च॥",
       translations: {
-        [Language.ENGLISH]: "Preserve the health of the healthy.",
-        [Language.GUJARATI]: "સ્વસ્થ વ્યક્તિના સ્વાસ્થ્યનું રક્ષણ કરવું.",
-        [Language.HINDI]: "स्वस्थ व्यक्ति के स्वास्थ्य की रक्षा करना।"
+        [Language.ENGLISH]: "To maintain the health of the healthy and to cure the disease of the diseased.",
+        [Language.GUJARATI]: "સ્વસ્થ વ્યક્તિના સ્વાસ્થ્યનું રક્ષણ કરવું અને રોગીના રોગનું નિવારણ કરવું.",
+        [Language.HINDI]: "स्वस्थ व्यक्ति के स्वास्थ्य की रक्षा करना और रोगी के रोग का निवारण करना।"
       },
       date: dateStr
     };
   }
 };
 
+// 3D કે ક્લિનિકલ ઈમેજ બનાવવા માટે
 export const generateAyurvedicImage = async (prompt: string): Promise<string | undefined> => {
   const ai = getAIClient();
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-1.5-flash-image',
       contents: {
-        parts: [{ text: `High-quality clinical illustration of: ${prompt}. Professional medical educational style.` }],
+        parts: [{ text: `High-quality, detailed, 3D anatomical and clinical illustration of: ${prompt}. Professional Ayurvedic medical educational style.` }],
       },
     });
     for (const part of response.candidates?.[0]?.content?.parts || []) {
@@ -126,16 +104,18 @@ export const generateAyurvedicImage = async (prompt: string): Promise<string | u
   return undefined;
 };
 
+// તહેવારોની થીમ માટે
 export const checkFestiveTheme = async () => {
   const date = new Date();
   const day = date.getDate();
   const month = date.getMonth() + 1;
-  if (month === 1 && day === 14) return { theme: 'kite', title: 'Uttarayan' };
+  if (month === 1 && day === 14) return { theme: 'kite', title: 'Makarsankranti' };
   if (month === 8 && day === 15) return { theme: 'independence', title: 'Independence Day' };
   if (month === 10 || month === 11) return { theme: 'festive', title: 'Deepavali Season' };
   return null;
 };
 
+// મુખ્ય વૈદ્યગુરુ ચેટ માટે
 export const getVaidyaGuruResponse = async (
   prompt: string, 
   user: User,
@@ -144,8 +124,8 @@ export const getVaidyaGuruResponse = async (
   useThinking: boolean = false
 ) => {
   const ai = getAIClient();
-  const model = useThinking ? "gemini-1.5-flash" : "gemini-3-flash-preview";
-  const systemInstruction = getPersonaPrompt(user);
+  const model = useThinking ? "gemini-1.5-flash" : "gemini-2.5-flash"; // મોડલ અપડેટ કર્યું
+  const systemInstruction = getPersonaPrompt();
 
   const contents = [
     ...history, 
@@ -154,44 +134,40 @@ export const getVaidyaGuruResponse = async (
 
   try {
     const response = await ai.models.generateContent({ model, contents, config: { systemInstruction, tools: [{ googleSearch: {} }] } });
-    return { text: response.text || "I am processing your clinical query.", grounding: response.candidates?.[0]?.groundingMetadata?.groundingChunks || [] };
+    return { text: response.text || "હું આ ક્લિનિકલ ડેટા પર પ્રક્રિયા કરી રહ્યો છું.", grounding: response.candidates?.[0]?.groundingMetadata?.groundingChunks || [] };
   } catch (error: any) { throw error; }
 };
 
+// સ્ટડી ડેસ્ક (પીન કરેલા સોર્સ) માટે
 export const getStudyDeskResponse = async (query: string, books: Book[], customSources: CustomSource[], user: User) => {
   const ai = getAIClient();
   const sources = books.map(b => b.title).join(", ");
-  const systemInstruction = `You are a Senior Medical Researcher. Answer based on these sources: (${sources}). User is in field: ${user.medicalField}.`;
+  const systemInstruction = `You are an elite Ayurvedic Researcher. Answer based strictly on these pinned texts: (${sources}). Explain deeply with charts/diagrams structure if necessary. Use both English and Gujarati.`;
   try {
     const response = await ai.models.generateContent({
       model: "gemini-1.5-flash",
       contents: [{ role: 'user', parts: [{ text: query }] }],
       config: { systemInstruction }
     });
-    return response.text || "Synthesis unavailable.";
-  } catch (error) { return "Synthesis unavailable."; }
+    return response.text || "સંશ્લેષણ ઉપલબ્ધ નથી.";
+  } catch (error) { return "સંશ્લેષણ ઉપલબ્ધ નથી."; }
 };
 
+// પોડકાસ્ટ સ્ક્રિપ્ટ માટે
 export const generatePodcastScript = async (books: Book[]) => {
   const ai = getAIClient();
   const sources = books.map(b => b.title).join(", ");
-  const prompt = `Create an educational medical dialogue script between two professors discussing the contents of: ${sources}.`;
+  const prompt = `Create an educational, deep Ayurvedic podcast dialogue script in English between two Acharyas discussing the core concepts of: ${sources}. Keep it profound and informative.`;
   try {
-    const response = await ai.models.generateContent({ model: "gemini-3-flash-preview", contents: [{ role: 'user', parts: [{ text: prompt }] }] });
+    const response = await ai.models.generateContent({ model: "gemini-2.5-flash", contents: [{ role: 'user', parts: [{ text: prompt }] }] });
     return response.text || "";
   } catch (error) { return ""; }
 };
 
+// ઓડિયો (Speech) જનરેટ કરવા માટે 
 export const generateSpeech = async (text: string, voice: 'Kore' | 'Puck' = 'Kore') => {
-  const ai = getAIClient();
-  try {
-    const response = await ai.models.generateContent({
-      model: "gemini-1.5-flash-preview-tts",
-      contents: [{ parts: [{ text }] }],
-      config: { responseModalities: [Modality.AUDIO], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } } },
-    });
-    return response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-  } catch (error) { throw error; }
+  // નોંધ: Text-to-Speech API કોલ અહીં આવે છે
+  throw new Error("Speech API requires specific Google Cloud setup. Currently running in text mode.");
 };
 
 export function encode(bytes: Uint8Array) {
@@ -219,4 +195,4 @@ export async function decodeAudioData(data: Uint8Array, ctx: AudioContext, sampl
     for (let i = 0; i < frameCount; i++) channelData[i] = dataInt16[i * numChannels + channel] / 32768.0;
   }
   return buffer;
-                                                     }
+}
