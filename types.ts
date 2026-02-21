@@ -1,3 +1,7 @@
+// અહી આપણે એપના બધા 'પ્રકાર' (Types) નક્કી કર્યા છે.
+// અન્ય કોર્સ (MBBS, BHMS) કાઢી નાખીને માત્ર BAMS અને 
+// આપણને જોઈતા જ રોલ (Role) રાખ્યા છે.
+
 export enum Language {
   GUJARATI = 'gu',
   ENGLISH = 'en',
@@ -9,24 +13,15 @@ export enum Gender {
   FEMALE = 'Female'
 }
 
+// રોલ હવે માત્ર બે જ રહેશે
 export enum Role {
-  STUDENT = 'Student',
-  PROFESSOR = 'Professor',
-  TEACHER = 'Teacher',
-  DOCTOR = 'Doctor',
-  PATIENT = 'Patient',
-  NORMAL = 'Normal Person'
+  STUDENT = 'Student/Teacher', // આયુર્વેદ અધ્યેતા (વિદ્યાર્થી/શિક્ષક) માટે
+  NORMAL = 'Normal Person'     // સામાન્ય વ્યક્તિ માટે
 }
 
+// મેડિકલ ફિલ્ડ માત્ર BAMS જ રાખ્યું છે 
 export enum MedicalField {
-  MBBS = 'MBBS',
-  BDS = 'BDS',
-  BAMS = 'BAMS',
-  BHMS = 'BHMS',
-  NURSING = 'Nursing',
-  PT = 'Physiotherapy',
-  PHARMACY = 'Pharmacy',
-  GENERAL = 'General Health'
+  BAMS = 'BAMS'
 }
 
 export enum CourseLevel {
@@ -37,8 +32,7 @@ export enum CourseLevel {
   INTERN = 'Internship',
   MD = 'Post Graduate (MD/MS)',
   PHD = 'PhD / Research',
-  NA = 'Not Applicable',
-  COMING_SOON = 'Coming Soon'
+  NA = 'Not Applicable'
 }
 
 export interface Adhyaya {
@@ -75,6 +69,7 @@ export interface CustomSource {
   data: string; // Base64
 }
 
+// યુઝરની પ્રોફાઈલનો ડેટા કેવો દેખાશે તે અહીં નક્કી થાય છે
 export interface User {
   id: string;
   name: string;
@@ -149,7 +144,7 @@ export interface DailyQuote {
   date: string; // YYYY-MM-DD
 }
 
-// New Types for Extra Material
+// વધારાના મટીરીયલ (Extra Material) માટેના ટાઇપ્સ
 export type MaterialType = 'video' | 'photo' | 'ppt' | 'pdf';
 
 export interface StudyMaterial {
