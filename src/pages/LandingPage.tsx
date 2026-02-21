@@ -1,97 +1,261 @@
-// આ પેજ આપણું 'Front Door' (લેન્ડિંગ પેજ) છે.
-// ગુગલ એડસેન્સના બોટને અપ્રુવલ આપવા માટે અહીં પૂરતું આયુર્વેદિક કન્ટેન્ટ રાખેલ છે.
-// સાથે જ મોડર્ન ડિઝાઇન અને 'Enter App' નું બટન પણ છે.
-
-import React from 'react';
+import React, { useState } from 'react';
 import { BannerAd, BannerAdSize, TestIds } from '../../components/BannerAd';
 
 interface LandingPageProps {
   onEnterApp: () => void;
 }
 
+type LangType = 'en' | 'gu' | 'hi';
+
+// ત્રણેય ભાષાઓનો ડેટા (Google Bot માટે English ડિફોલ્ટ છે)
+const CONTENT = {
+  en: {
+    subtitle: "The Ultimate Ancient Wisdom Portal & AI Clinical Companion",
+    purposeTitle: "Fundamental Purpose of Ayurveda",
+    purposeDesc: "Ayurveda is not just a medical system, but a complete science of living in harmony with the laws of the universe. Maharishi Charaka has very precisely explained the main objective of Ayurveda in Charaka Samhita:",
+    shlokaDesc: "Word-by-Word Description & Sanskrit Grammar:",
+    words: [
+      { w: "Svasthasya:", d: "Of the healthy person (Svastha + sya suffix)." },
+      { w: "Svasthya:", d: "Health / Wellbeing." },
+      { w: "Rakshanam:", d: "To protect / Maintain." },
+      { w: "Aturasya:", d: "Of the sick or diseased person." },
+      { w: "Vikara:", d: "Disease or imbalance of Doshas." },
+      { w: "Prashamanam:", d: "To pacify or cure." },
+      { w: "Cha:", d: "And (Indeclinable)." }
+    ],
+    disclaimerTitle: "Health Disclaimer",
+    benefits: "Benefits: Following Ayurvedic daily and seasonal routines boosts immunity and brings mental peace.",
+    avoid: "Caution: Pregnant women, children, and patients with severe illnesses should not try remedies without knowing their Prakriti.",
+    note: "Note: This information is for educational purposes. Always consult a registered Ayurvedic practitioner (Vaidya).",
+    btnText: "Open Vaidya Guru App",
+    lifestyle: "Ayurvedic Lifestyle (Ritucharya)",
+    seasons: [
+      { icon: "🌸", t: "Spring (Vasant)", d: "Kapha dosha aggravates. Consume light, dry, and bitter-astringent foods. Exercise and Udvartana (massage) are highly recommended." },
+      { icon: "☀️", t: "Summer (Grishma)", d: "Body strength decreases due to heat. Sweet, cold, and liquid diets are best. Avoid excessive sun exposure and heavy physical exertion." },
+      { icon: "🌧️", t: "Monsoon (Varsha)", d: "Vata dosha aggravates and digestion weakens. Sour, salty, and unctuous foods are beneficial. Drinking boiled water is highly health-promoting." },
+      { icon: "❄️", t: "Winter (Hemant & Shishir)", d: "Digestive fire (Jatharagni) is strongest. The body can digest heavy, sweet, and nourishing foods. Best time to build physical strength." }
+    ],
+    inspireTitle: "Inspiration & Purpose",
+    scholars: "For Ayurveda Scholars",
+    scholarsDesc: "\"You are not just studying a degree; you are keeping a 5000-year-old legacy alive. Your hands will heal, and your knowledge will guide the world's oldest life science. Keep learning, keep evolving.\"",
+    seekers: "For Wellness Seekers",
+    seekersDesc: "\"Health is not merely the absence of disease, but a state of complete physical, mental, and spiritual well-being. Embrace the Ayurvedic lifestyle to find absolute balance and inner peace.\""
+  },
+  gu: {
+    subtitle: "આયુર્વેદ અધ્યેતાઓ માટે પ્રાચીન જ્ઞાન અને AI ક્લિનિકલ સાથી",
+    purposeTitle: "આયુર્વેદનો મૂળભૂત ઉદ્દેશ્ય",
+    purposeDesc: "આયુર્વેદ એ માત્ર એક ચિકિત્સા પદ્ધતિ નથી, પરંતુ તે બ્રહ્માંડના નિયમો સાથે જોડાઈને જીવન જીવવાનું એક સંપૂર્ણ વિજ્ઞાન છે. મહર્ષિ ચરક દ્વારા રચિત ચરક સંહિતામાં આયુર્વેદનો મુખ્ય હેતુ સચોટ રીતે સમજાવવામાં આવ્યો છે:",
+    shlokaDesc: "વર્ડ-બાય-વર્ડ ડિસ્ક્રિપ્શન અને સંસ્કૃત વ્યાકરણ:",
+    words: [
+      { w: "स्वस्थस्य:", d: "'સ્વસ્થ' મૂળ શબ્દ + 'સ્ય' પ્રત્યય. અર્થ: સ્વસ્થ વ્યક્તિના." },
+      { w: "स्वास्थ्य:", d: "સ્વાસ્થ્યનું / તંદુરસ્તીનું." },
+      { w: "रक्षणम्:", d: "રક્ષણ કરવું." },
+      { w: "आतुरस्य:", d: "'આતુર' (બીમાર) મૂળ શબ્દ + 'સ્ય' પ્રત્યય. અર્થ: રોગી વ્યક્તિના." },
+      { w: "विकार:", d: "રોગ અથવા દોષોનું અસંતુલન." },
+      { w: "प्रशमनं:", d: "મટાડવું અથવા શાંત કરવું." },
+      { w: "च:", d: "અને (અવ્યય)." }
+    ],
+    disclaimerTitle: "સ્વાસ્થ્ય અંગેની ચેતવણી",
+    benefits: "ફાયદા: આયુર્વેદિક દિનચર્યા અને ઋતુચર્યાનું પાલન કરવાથી રોગપ્રતિકારક શક્તિ (Immunity) વધે છે.",
+    avoid: "કોણે ન કરવું?: ગંભીર બીમારીવાળા દર્દીઓએ કે સગર્ભા સ્ત્રીઓએ પ્રકૃતિ જાણ્યા વિના કોઈ અખતરા કરવા નહીં.",
+    note: "નોંધ: આ માહિતી માત્ર શૈક્ષણિક હેતુ માટે છે. કોઈપણ પ્રયોગ કરતાં પહેલાં રજિસ્ટર્ડ વૈદ્યની સલાહ લેવી ફરજિયાત છે.",
+    btnText: "Vaidya Guru એપ ખોલો",
+    lifestyle: "આયુર્વેદિક જીવનશૈલી (ઋતુચર્યા)",
+    seasons: [
+      { icon: "🌸", t: "વસંત ઋતુ", d: "આ ઋતુમાં કફ દોષનો પ્રકોપ થાય છે. હળવો, સૂકો અને તીખો-કડવો આહાર લેવો જોઈએ. વ્યાયામ અને ઉદ્વર્તન કરવાથી શરીરની આળસ દૂર થાય છે." },
+      { icon: "☀️", t: "ગ્રીષ્મ ઋતુ", d: "વાતાવરણમાં ઉષ્ણતા વધવાથી શારીરિક બળ ઘટે છે. મધુર, શીતળ અને પ્રવાહી આહાર શ્રેષ્ઠ છે. તડકામાં વધુ ફરવાનું ટાળવું જોઈએ." },
+      { icon: "🌧️", t: "વર્ષા ઋતુ", d: "આ સમયે વાત દોષનો પ્રકોપ અને જઠરાગ્નિ મંદ હોય છે. ખાટો, ખારો અને સ્નિગ્ધ આહાર લેવો. ઉકાળેલું પાણી પીવું સ્વાસ્થ્યવર્ધક છે." },
+      { icon: "❄️", t: "હેમંત અને શિશિર", d: "શિયાળામાં જઠરાગ્નિ પ્રબળ હોય છે. પૌષ્ટિક, મધુર અને સ્નિગ્ધ આહાર પચાવવાની ક્ષમતા વધે છે. આ ઋતુ બળ વધારવા માટે ઉત્તમ છે." }
+    ],
+    inspireTitle: "પ્રેરણા અને ઉદ્દેશ્ય",
+    scholars: "આયુર્વેદ અધ્યેતાઓ માટે",
+    scholarsDesc: "\"તમે માત્ર મેડિકલ ડિગ્રીનો અભ્યાસ નથી કરી રહ્યા; તમે ૫૦૦૦ વર્ષ જૂના વારસાને જીવંત રાખી રહ્યા છો. તમારા હાથ રોગો મટાડશે, શીખતા રહો, આગળ વધતા રહો.\"",
+    seekers: "સામાન્ય વ્યક્તિઓ માટે",
+    seekersDesc: "\"સ્વાસ્થ્ય એટલે માત્ર બીમારીનો અભાવ નહીં, પરંતુ શારીરિક, માનસિક અને આધ્યાત્મિક સુખાકારીની સંપૂર્ણ અવસ્થા. આંતરિક શાંતિ માટે આયુર્વેદિક જીવનશૈલી અપનાવો.\""
+  },
+  hi: {
+    subtitle: "आयुर्वेद के छात्रों के लिए प्राचीन ज्ञान और AI क्लिनिकल साथी",
+    purposeTitle: "आयुर्वेद का मूल उद्देश्य",
+    purposeDesc: "आयुर्वेद केवल एक चिकित्सा पद्धति नहीं है, बल्कि ब्रह्मांड के नियमों के साथ सद्भाव में जीने का एक पूर्ण विज्ञान है। महर्षि चरक ने आयुर्वेद का मुख्य उद्देश्य स्पष्ट किया है:",
+    shlokaDesc: "शब्द-दर-शब्द विवरण और संस्कृत व्याकरण:",
+    words: [
+      { w: "स्वस्थस्य:", d: "स्वस्थ व्यक्ति के (षष्ठी विभक्ति)।" },
+      { w: "स्वास्थ्य:", d: "स्वास्थ्य की / तंदुरुस्ती की।" },
+      { w: "रक्षणम्:", d: "रक्षा करना।" },
+      { w: "आतुरस्य:", d: "रोगी व्यक्ति के (षष्ठी विभक्ति)।" },
+      { w: "विकार:", d: "रोग या दोषों का असंतुलन।" },
+      { w: "प्रशमनं:", d: "शांत करना या ठीक करना।" },
+      { w: "च:", d: "और (अव्यय)।" }
+    ],
+    disclaimerTitle: "स्वास्थ्य चेतावनी",
+    benefits: "लाभ: आयुर्वेदिक दिनचर्या और ऋतुचर्या का पालन करने से रोग प्रतिरोधक क्षमता बढ़ती है।",
+    avoid: "सावधानी: गर्भवती महिलाओं और गंभीर रोगियों को बिना अपनी प्रकृति जाने कोई उपाय नहीं करना चाहिए।",
+    note: "नोट: यह जानकारी केवल शैक्षिक उद्देश्य के लिए है। किसी भी उपाय से पहले हमेशा पंजीकृत वैद्य से सलाह लें।",
+    btnText: "Vaidya Guru ऐप खोलें",
+    lifestyle: "आयुर्वेदिक जीवनशैली (ऋतुचर्या)",
+    seasons: [
+      { icon: "🌸", t: "वसंत ऋतु", d: "कफ दोष का प्रकोप होता है। हल्का, रूखा और कड़वा-तीखा आहार लेना चाहिए। व्यायाम लाभकारी है।" },
+      { icon: "☀️", t: "ग्रीष्म ऋतु", d: "गर्मी के कारण शारीरिक बल कम हो जाता है। मीठा, ठंडा और तरल आहार सर्वोत्तम है।" },
+      { icon: "🌧️", t: "वर्षा ऋतु", d: "वात दोष का प्रकोप होता है और पाचन कमजोर होता है। खट्टा, नमकीन और स्निग्ध आहार लें।" },
+      { icon: "❄️", t: "हेमंत और शिशिर", d: "पाचन अग्नि सबसे तेज होती है। पौष्टिक और भारी आहार आसानी से पच जाता है। यह बल बढ़ाने का उत्तम समय है।" }
+    ],
+    inspireTitle: "प्रेरणा और उद्देश्य",
+    scholars: "आयुर्वेद छात्रों के लिए",
+    scholarsDesc: "\"आप सिर्फ एक डिग्री नहीं पढ़ रहे हैं; आप 5000 साल पुरानी विरासत को जीवित रख रहे हैं। आपके हाथ रोग मिटाएंगे। सीखते रहें, आगे बढ़ते रहें।\"",
+    seekers: "सामान्य व्यक्तियों के लिए",
+    seekersDesc: "\"स्वास्थ्य का अर्थ केवल बीमारी का न होना नहीं है, बल्कि पूर्ण शारीरिक और मानसिक कल्याण है। संतुलन के लिए आयुर्वेद अपनाएं।\""
+  }
+};
+
 export const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
+  const [lang, setLang] = useState<LangType>('en'); // Default language is English
+  const t = CONTENT[lang];
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f8f5f0] to-[#e6f0e9] font-sans selection:bg-green-200">
+    <div className="min-h-screen bg-stone-50 text-stone-800 font-sans selection:bg-emerald-200">
       
-      {/* હેડર સેક્શન */}
-      <header className="pt-16 pb-12 text-center px-4">
-        <div className="w-24 h-24 mx-auto bg-white rounded-full p-2 shadow-xl mb-6 animate-bounce rotate-3">
-          <img src="assets/logo.png" className="w-full h-full object-cover rounded-full" alt="Vaidya Guru Logo" />
+      {/* Premium Top Navigation with Language Switcher */}
+      <nav className="fixed top-0 left-0 right-0 p-4 flex justify-between items-center z-50 bg-white/70 backdrop-blur-xl border-b border-stone-200 shadow-sm">
+        <div className="flex items-center gap-3">
+          <img src="assets/logo.png" className="w-8 h-8 md:w-10 md:h-10 object-contain drop-shadow-md" alt="Vaidya Guru Logo" />
+          <span className="font-bold serif-font text-lg md:text-xl text-emerald-900 hidden sm:block">VaidyaGuru</span>
         </div>
-        <h1 className="text-5xl md:text-6xl font-bold text-green-900 mb-4 serif-font drop-shadow-sm">Vaidya Guru</h1>
-        <p className="text-lg md:text-xl text-stone-600 font-medium max-w-2xl mx-auto">
-          The Ultimate Ancient Wisdom Portal & AI Clinical Companion for Ayurveda Scholars.
+        <div className="flex gap-2 bg-stone-100 p-1 rounded-full border border-stone-200 shadow-inner">
+          <button onClick={() => setLang('en')} className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${lang === 'en' ? 'bg-emerald-900 text-white shadow-md scale-105' : 'text-stone-500 hover:text-emerald-800'}`}>English</button>
+          <button onClick={() => setLang('gu')} className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${lang === 'gu' ? 'bg-emerald-900 text-white shadow-md scale-105' : 'text-stone-500 hover:text-emerald-800'}`}>ગુજરાતી</button>
+          <button onClick={() => setLang('hi')} className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${lang === 'hi' ? 'bg-emerald-900 text-white shadow-md scale-105' : 'text-stone-500 hover:text-emerald-800'}`}>हिन्दी</button>
+        </div>
+      </nav>
+
+      {/* Hero Header Section */}
+      <header className="pt-32 pb-16 text-center px-4 relative overflow-hidden flex flex-col items-center">
+        {/* Abstract Background Elements */}
+        <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-emerald-200/40 rounded-full blur-[100px] pointer-events-none"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] bg-amber-200/30 rounded-full blur-[100px] pointer-events-none"></div>
+        
+        <div className="w-28 h-28 bg-white rounded-[2rem] p-2 shadow-2xl mb-8 border-2 border-emerald-50 relative z-10 rotate-3 hover:rotate-0 transition-all duration-500">
+          <img src="assets/logo.png" className="w-full h-full object-cover rounded-2xl" alt="Logo" />
+        </div>
+        <h1 className="text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-950 to-emerald-700 mb-6 serif-font relative z-10 tracking-tight">Vaidya Guru</h1>
+        <p className="text-lg md:text-2xl text-stone-600 font-medium max-w-3xl mx-auto relative z-10 leading-relaxed">
+          {t.subtitle}
         </p>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 pb-20">
+      <main className="max-w-5xl mx-auto px-4 pb-20 relative z-10">
         
-        {/* મુખ્ય આર્ટિકલ - ગુગલ બોટ માટે કન્ટેન્ટ */}
-        <article className="bg-white/80 backdrop-blur-xl rounded-[2.5rem] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] p-8 md:p-12 mb-10 border border-white">
-          <h2 className="text-3xl font-bold text-stone-800 mb-6 serif-font border-b-2 border-green-100 pb-4">
-            આયુર્વેદનો મૂળભૂત ઉદ્દેશ્ય (Fundamental Purpose of Ayurveda)
+        {/* Main Article Content for Google Bot */}
+        <article className="bg-white rounded-[3rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] p-8 md:p-14 mb-12 border border-stone-100">
+          <h2 className="text-3xl md:text-4xl font-bold text-emerald-950 mb-6 serif-font border-b border-emerald-100 pb-4">
+            {t.purposeTitle}
           </h2>
-          <p className="text-stone-700 mb-8 text-lg leading-relaxed font-medium">
-            આયુર્વેદ એ માત્ર એક ચિકિત્સા પદ્ધતિ નથી, પરંતુ તે બ્રહ્માંડના નિયમો સાથે જોડાઈને જીવન જીવવાનું એક સંપૂર્ણ વિજ્ઞાન છે. મહર્ષિ ચરક દ્વારા રચિત ચરક સંહિતામાં આયુર્વેદનો મુખ્ય હેતુ ખૂબ જ સચોટ રીતે સમજાવવામાં આવ્યો છે:
+          <p className="text-stone-600 mb-10 text-lg md:text-xl leading-relaxed font-medium">
+            {t.purposeDesc}
           </p>
           
-          <div className="bg-gradient-to-r from-green-50 to-amber-50 p-8 rounded-[2rem] border-l-8 border-green-800 mb-10 text-center shadow-inner relative overflow-hidden">
-            <div className="absolute top-0 right-0 text-9xl opacity-5">🕉️</div>
-            <p className="text-2xl md:text-3xl font-bold text-green-900 mb-4 leading-normal relative z-10">
+          <div className="bg-gradient-to-br from-emerald-900 via-emerald-800 to-teal-900 p-8 md:p-12 rounded-[2.5rem] border-l-8 border-amber-400 mb-12 text-center shadow-2xl relative overflow-hidden group">
+            <div className="absolute -top-10 -right-10 text-[150px] opacity-[0.03] text-white group-hover:scale-110 transition-transform duration-700">ॐ</div>
+            <p className="text-2xl md:text-4xl font-bold text-white mb-6 leading-relaxed relative z-10 serif-font drop-shadow-md">
               स्वस्थस्य स्वास्थ्यरक्षणमातुरस्य विकारप्रशमनं च॥
             </p>
-            <p className="text-md text-stone-500 font-bold tracking-widest uppercase relative z-10">
-              (ચરક સંહિતા, સૂત્રસ્થાન ૩૦:૨૬)
+            <p className="text-sm md:text-base text-emerald-200 font-bold tracking-widest uppercase relative z-10">
+              (Charaka Samhita, Sutrasthana 30:26)
             </p>
           </div>
 
-          <h3 className="text-2xl font-bold text-stone-800 mb-6 serif-font">Word-by-Word Description & Sanskrit Grammar:</h3>
-          <div className="bg-stone-50 p-8 rounded-[2rem] mb-10 border border-stone-200 shadow-sm">
-            <ul className="space-y-4 text-stone-700 font-medium">
-              <li className="flex gap-3"><span className="text-green-700 font-bold">स्वस्थस्य:</span> <span>'સ્વસ્થ' મૂળ શબ્દ + 'સ્ય' પ્રત્યય (ષષ્ઠી વિભક્તિ, એકવચન). અર્થ: સ્વસ્થ વ્યક્તિના (Of the healthy person).</span></li>
-              <li className="flex gap-3"><span className="text-green-700 font-bold">स्वास्थ्य:</span> <span>સ્વાસ્થ્યનું / તંદુરસ્તીનું (Health).</span></li>
-              <li className="flex gap-3"><span className="text-green-700 font-bold">रक्षणम्:</span> <span>'રક્ષણ' મૂળ શબ્દ + 'અમ્' પ્રત્યય (દ્વિતીયા વિભક્તિ, એકવચન). અર્થ: રક્ષણ કરવું (To protect).</span></li>
-              <li className="flex gap-3"><span className="text-green-700 font-bold">आतुरस्य:</span> <span>'આતુર' (બીમાર) મૂળ શબ્દ + 'સ્ય' પ્રત્યય (ષષ્ઠી વિભક્તિ, એકવચન). અર્થ: રોગી વ્યક્તિના (Of the sick person).</span></li>
-              <li className="flex gap-3"><span className="text-green-700 font-bold">विकार:</span> <span>રોગ અથવા શારીરિક/માનસિક દોષોનું અસંતુલન (Disease/Disorder).</span></li>
-              <li className="flex gap-3"><span className="text-green-700 font-bold">प्रशमनं:</span> <span>'પ્રશમન' મૂળ શબ્દ + 'અમ્' પ્રત્યય (દ્વિતીયા વિભક્તિ, એકવચન). અર્થ: મટાડવું અથવા શાંત કરવું (To pacify or cure).</span></li>
-              <li className="flex gap-3"><span className="text-green-700 font-bold">च:</span> <span>અવ્યય (Indeclinable). અર્થ: અને (And).</span></li>
+          <h3 className="text-2xl font-bold text-stone-800 mb-6 serif-font">{t.shlokaDesc}</h3>
+          <div className="bg-stone-50 p-8 rounded-[2rem] mb-12 border border-stone-200">
+            <ul className="space-y-4 text-stone-700 font-medium text-lg">
+              {t.words.map((item, idx) => (
+                <li key={idx} className="flex flex-col sm:flex-row sm:gap-4 border-b border-stone-200/60 pb-3 last:border-0 last:pb-0">
+                  <span className="text-emerald-800 font-black min-w-[140px] text-xl mb-1 sm:mb-0">{item.w}</span> 
+                  <span className="text-stone-600 leading-relaxed">{item.d}</span>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* કન્ટેન્ટની બરાબર વચ્ચે ગુગલ એડસેન્સની એડ (Ad Banner) */}
-          <div className="my-12 flex justify-center bg-stone-100/50 py-4 rounded-2xl border border-dashed border-stone-300">
+          {/* AdSense Banner positioned safely between content */}
+          <div className="my-14 flex justify-center bg-stone-100 py-6 rounded-3xl border border-dashed border-stone-300">
             <BannerAd unitId={TestIds.BANNER} size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER} />
           </div>
 
-          <div className="bg-red-50/80 p-8 rounded-[2rem] border border-red-100 shadow-sm">
-            <h3 className="text-xl font-bold text-red-900 mb-4 flex items-center gap-2">
-              <span className="text-2xl">⚠️</span> સ્વાસ્થ્ય અંગેની ચેતવણી (Health Disclaimer)
+          <div className="bg-red-50 p-8 rounded-[2rem] border border-red-100">
+            <h3 className="text-xl font-bold text-red-900 mb-6 flex items-center gap-3">
+              <span className="text-2xl">⚠️</span> {t.disclaimerTitle}
             </h3>
-            <ul className="space-y-3 text-sm md:text-base text-stone-800 font-medium">
-              <li><span className="font-bold text-green-800 bg-green-100 px-2 py-1 rounded">ફાયદા:</span> આયુર્વેદિક દિનચર્યા અને ઋતુચર્યાનું પાલન કરવાથી રોગપ્રતિકારક શક્તિ (Immunity) વધે છે, મન શાંત રહે છે.</li>
-              <li><span className="font-bold text-blue-800 bg-blue-100 px-2 py-1 rounded">કોણે ન કરવું?:</span> ગંભીર બીમારીવાળા દર્દીઓએ, સગર્ભા સ્ત્રીઓએ કે બાળકોએ પોતાની પ્રકૃતિ જાણ્યા વિના કોઈ જાતે અખતરા કરવા નહીં.</li>
-              <li className="font-bold text-red-700 mt-6 pt-4 border-t border-red-200">
-                નોંધ: આ એપની માહિતી માત્ર શૈક્ષણિક હેતુ અને સામાન્ય જ્ઞાન માટે છે. કોઈપણ પ્રયોગ કરતાં પહેલાં રજિસ્ટર્ડ આયુર્વેદિક ચિકિત્સક (વૈદ્ય) ની સલાહ લેવી ફરજિયાત છે.
+            <ul className="space-y-4 text-base md:text-lg text-stone-700 font-medium">
+              <li className="flex items-start gap-3"><span className="text-emerald-600 mt-1">✓</span> <span>{t.benefits}</span></li>
+              <li className="flex items-start gap-3"><span className="text-amber-600 mt-1">!</span> <span>{t.avoid}</span></li>
+              <li className="font-bold text-red-700 mt-6 pt-6 border-t border-red-200/50">
+                {t.note}
               </li>
             </ul>
           </div>
         </article>
 
-        {/* એપમાં એન્ટર થવાનું મોડર્ન બટન */}
-        <div className="text-center py-8">
+        {/* The Action Button */}
+        <div className="text-center py-10 relative z-20">
           <button 
             onClick={onEnterApp} 
-            className="group relative inline-flex items-center justify-center px-10 py-5 font-bold text-white transition-all duration-300 bg-gradient-to-r from-green-900 to-green-700 rounded-full shadow-[0_15px_30px_-5px_rgba(20,83,45,0.4)] hover:shadow-[0_20px_40px_-5px_rgba(20,83,45,0.6)] hover:-translate-y-1 overflow-hidden"
+            className="group relative inline-flex items-center justify-center px-10 py-6 font-bold text-white transition-all duration-300 bg-emerald-900 rounded-full shadow-[0_15px_40px_-10px_rgba(6,78,59,0.5)] hover:shadow-[0_20px_50px_-10px_rgba(6,78,59,0.7)] hover:-translate-y-2 overflow-hidden border border-emerald-700"
           >
-            <span className="absolute w-0 h-0 transition-all duration-500 ease-out bg-white rounded-full group-hover:w-full group-hover:h-56 opacity-10"></span>
-            <span className="relative text-xl flex items-center gap-3">
-              Open Vaidya Guru App 
-              <svg className="w-6 h-6 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+            <span className="absolute w-0 h-0 transition-all duration-700 ease-out bg-amber-500 rounded-full group-hover:w-[400px] group-hover:h-[400px] opacity-20"></span>
+            <span className="relative text-xl md:text-2xl flex items-center gap-4 uppercase tracking-wider">
+              {t.btnText}
+              <svg className="w-8 h-8 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
             </span>
           </button>
         </div>
-        
+
+        {/* Ritucharya Section */}
+        <section className="mt-16 pt-16 border-t border-stone-200 relative">
+          <h2 className="text-4xl font-bold text-center text-emerald-950 mb-14 serif-font">{t.lifestyle}</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
+            {t.seasons.map((season, idx) => (
+              <div key={idx} className="bg-white p-8 md:p-10 rounded-[2.5rem] border border-stone-100 shadow-[0_10px_30px_-15px_rgba(0,0,0,0.08)] hover:shadow-2xl transition-all duration-500 group hover:-translate-y-2">
+                <div className="text-5xl mb-6 bg-stone-50 w-20 h-20 flex items-center justify-center rounded-2xl group-hover:scale-110 group-hover:rotate-6 transition-all">{season.icon}</div>
+                <h3 className="text-2xl font-bold text-stone-800 mb-4 serif-font">{season.t}</h3>
+                <p className="text-stone-600 font-medium leading-relaxed text-lg">{season.d}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Motivation Section */}
+          <div className="bg-gradient-to-br from-stone-900 to-emerald-950 rounded-[3rem] p-8 md:p-16 text-white shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 blur-[80px] rounded-full -mr-20 -mt-20 pointer-events-none"></div>
+            
+            <h2 className="text-3xl md:text-4xl font-bold mb-12 serif-font text-center text-amber-400">{t.inspireTitle}</h2>
+            
+            <div className="grid md:grid-cols-2 gap-10 relative z-10">
+              <div className="bg-white/5 p-8 md:p-10 rounded-[2rem] backdrop-blur-md border border-white/10 hover:bg-white/10 transition-colors">
+                <h3 className="text-xl md:text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                  <span className="bg-emerald-800 p-2 rounded-xl text-xl">👨‍⚕️</span> {t.scholars}
+                </h3>
+                <p className="text-stone-300 leading-relaxed font-medium text-lg italic">{t.scholarsDesc}</p>
+              </div>
+              <div className="bg-white/5 p-8 md:p-10 rounded-[2rem] backdrop-blur-md border border-white/10 hover:bg-white/10 transition-colors">
+                <h3 className="text-xl md:text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                  <span className="bg-amber-600 p-2 rounded-xl text-xl">🌿</span> {t.seekers}
+                </h3>
+                <p className="text-stone-300 leading-relaxed font-medium text-lg italic">{t.seekersDesc}</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
       </main>
+
+      {/* Footer */}
+      <footer className="w-full text-center py-12 border-t border-stone-200 bg-white">
+        <div className="flex justify-center gap-8 text-sm font-bold text-stone-400 mb-6">
+          <a href="/privacy.html" target="_blank" rel="noopener noreferrer" className="hover:text-emerald-800 transition-colors">Privacy Policy</a>
+          <a href="#" className="hover:text-emerald-800 transition-colors">Terms of Service</a>
+        </div>
+        <p className="text-xs text-stone-300 uppercase tracking-widest font-black">© 2026 Vaidya Guru. Dedicated to Ancient Wisdom.</p>
+      </footer>
+      
     </div>
   );
 };
