@@ -221,7 +221,54 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
               </div>
             ))}
           </div>
+          {/* ========================================================= */}
+          {/* નવો ઉમેરેલો ત્રિદોષ સિદ્ધાંત આર્ટિકલ (Tridosha Section) */}
+          {/* ========================================================= */}
+          <section className="mt-16 mb-24 relative z-10">
+            <h2 className="text-4xl font-bold text-center text-emerald-950 mb-6 serif-font">
+              {lang === 'en' ? 'Tridosha Siddhanta (The 3 Bio-Energies)' : lang === 'gu' ? 'ત્રિદોષ સિદ્ધાંત (ત્રણ શારીરિક ઉર્જા)' : 'त्रिदोष सिद्धांत (तीन शारीरिक ऊर्जा)'}
+            </h2>
+            <p className="text-stone-600 text-center text-lg md:text-xl max-w-4xl mx-auto font-medium mb-12 leading-relaxed">
+              {lang === 'en' ? 'According to Ayurveda, the human body is composed of three fundamental energies or Doshas: Vata, Pitta, and Kapha. Their perfect balance defines health, and their imbalance leads to disease.' : lang === 'gu' ? 'આયુર્વેદ અનુસાર, માનવ શરીર ત્રણ મૂળભૂત દોષોનું બનેલું છે: વાત, પિત્ત અને કફ. આ દોષોનું સંપૂર્ણ સંતુલન એ જ સ્વાસ્થ્ય છે અને તેમનું અસંતુલન રોગનું કારણ બને છે.' : 'आयुर्वेद के अनुसार, मानव शरीर तीन मूलभूत दोषों से बना है: वात, पित्त और कफ। इन दोषों का पूर्ण संतुलन ही स्वास्थ्य है और इनका असंतुलन रोग का कारण बनता है।'}
+            </p>
 
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {/* Vata */}
+              <div className="bg-white p-8 rounded-[2.5rem] border-t-8 border-blue-400 shadow-lg hover:-translate-y-2 hover:shadow-2xl transition-all duration-500 group">
+                <div className="text-6xl mb-6 bg-blue-50 w-20 h-20 flex items-center justify-center rounded-3xl group-hover:scale-110 transition-transform">💨</div>
+                <h3 className="text-2xl font-bold text-stone-800 mb-4 serif-font">
+                  {lang === 'en' ? 'Vata (Wind & Space)' : lang === 'gu' ? 'વાત દોષ (વાયુ અને આકાશ)' : 'वात दोष (वायु और आकाश)'}
+                </h3>
+                <p className="text-stone-600 font-medium leading-relaxed text-lg">
+                  {lang === 'en' ? 'Controls movement, breathing, blood circulation, and the nervous system. When out of balance, it causes anxiety, joint pain, and dry skin.' : lang === 'gu' ? 'શરીરનું હલનચલન, શ્વાસોચ્છ્વાસ, રક્ત પરિભ્રમણ અને જ્ઞાનતંતુઓનું (Nervous System) નિયંત્રણ કરે છે. અસંતુલિત થવાથી સાંધાના દુખાવા, ચિંતા અને ચામડીનું સુકાવું થાય છે.' : 'शरीर की गति, श्वास, रक्त परिसंचरण और तंत्रिका तंत्र को नियंत्रित करता है। असंतुलित होने पर जोड़ों का दर्द, चिंता और रूखी त्वचा होती है।'}
+                </p>
+              </div>
+
+              {/* Pitta */}
+              <div className="bg-white p-8 rounded-[2.5rem] border-t-8 border-red-500 shadow-lg hover:-translate-y-2 hover:shadow-2xl transition-all duration-500 group">
+                <div className="text-6xl mb-6 bg-red-50 w-20 h-20 flex items-center justify-center rounded-3xl group-hover:scale-110 transition-transform">🔥</div>
+                <h3 className="text-2xl font-bold text-stone-800 mb-4 serif-font">
+                  {lang === 'en' ? 'Pitta (Fire & Water)' : lang === 'gu' ? 'પિત્ત દોષ (અગ્નિ અને જળ)' : 'पित्त दोष (अग्नि और जल)'}
+                </h3>
+                <p className="text-stone-600 font-medium leading-relaxed text-lg">
+                  {lang === 'en' ? 'Governs digestion, metabolism, energy production, and intelligence. Imbalance leads to acidity, anger, inflammation, and ulcers.' : lang === 'gu' ? 'પાચન, ચયાપચય (Metabolism), શરીરમાં ઉર્જા ઉત્પાદન અને બુદ્ધિનું સંચાલન કરે છે. અસંતુલિત થવાથી એસિડિટી, ક્રોધ, બળતરા અને અલ્સર થઈ શકે છે.' : 'पाचन, चयापचय, शरीर में ऊर्जा उत्पादन और बुद्धि का प्रबंधन करता है। असंतुलित होने से एसिडिटी, क्रोध, जलन और अल्सर हो सकता है।'}
+                </p>
+              </div>
+
+              {/* Kapha */}
+              <div className="bg-white p-8 rounded-[2.5rem] border-t-8 border-emerald-500 shadow-lg hover:-translate-y-2 hover:shadow-2xl transition-all duration-500 group">
+                <div className="text-6xl mb-6 bg-emerald-50 w-20 h-20 flex items-center justify-center rounded-3xl group-hover:scale-110 transition-transform">🌍</div>
+                <h3 className="text-2xl font-bold text-stone-800 mb-4 serif-font">
+                  {lang === 'en' ? 'Kapha (Earth & Water)' : lang === 'gu' ? 'કફ દોષ (પૃથ્વી અને જળ)' : 'कफ दोष (पृथ्वी और जल)'}
+                </h3>
+                <p className="text-stone-600 font-medium leading-relaxed text-lg">
+                  {lang === 'en' ? 'Provides physical structure, lubrication, immunity, and emotional calmness. Excess Kapha causes lethargy, weight gain, and congestion.' : lang === 'gu' ? 'શરીરને બંધારણ, સ્નિગ્ધતા (Lubrication), મજબૂત રોગપ્રતિકારક શક્તિ અને માનસિક શાંતિ આપે છે. વધવાથી આળસ, વજન વધવું અને શરદી-ખાંસી થાય છે.' : 'शरीर को संरचना, स्नेहन, मजबूत प्रतिरक्षा और मानसिक शांति प्रदान करता है। बढ़ने से आलस, वजन बढ़ना और सर्दी-खांसी होती है।'}
+                </p>
+              </div>
+            </div>
+          </section>
+          {/* ========================================================= */}
+          
           {/* Motivation Section */}
           <div className="bg-gradient-to-br from-stone-900 to-emerald-950 rounded-[3rem] p-8 md:p-16 text-white shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 blur-[80px] rounded-full -mr-20 -mt-20 pointer-events-none"></div>
