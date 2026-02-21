@@ -298,7 +298,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
       <footer className="w-full text-center py-12 border-t border-stone-200 bg-white">
         <div className="flex justify-center gap-8 text-sm font-bold text-stone-400 mb-6">
           <a href="/privacy.html" target="_blank" rel="noopener noreferrer" className="hover:text-emerald-800 transition-colors">Privacy Policy</a>
-          <a href="#" className="hover:text-emerald-800 transition-colors">Terms of Service</a>
+          <a href="/terms.html" className="hover:text-emerald-800 transition-colors">Terms of Service</a>
         </div>
         <p className="text-xs text-stone-300 uppercase tracking-widest font-black">© 2026 Vaidya Guru. Dedicated to Ancient Wisdom.</p>
       </footer>
