@@ -235,7 +235,7 @@ export const Profile: React.FC = () => {
         <div className="text-center pb-10">
           <p className="text-xs font-bold text-stone-400 flex justify-center gap-4">
             <a href="/privacy.html" target="_blank" rel="noopener noreferrer" className="hover:text-stone-600 transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-stone-600 transition-colors">Terms of Service</a>
+            <a href="/terms.html" className="hover:text-stone-600 transition-colors">Terms of Service</a>
           </p>
           <p className="text-[10px] text-stone-300 mt-4 uppercase tracking-widest">VaidyaGuru ID: {user.id}</p>
         </div>
