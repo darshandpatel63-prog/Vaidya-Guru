@@ -3,7 +3,7 @@
 // સાથે જ મોડર્ન ડિઝાઇન અને 'Enter App' નું બટન પણ છે.
 
 import React from 'react';
-import { BannerAd, BannerAdSize, TestIds } from '../components/BannerAd';
+import { BannerAd, BannerAdSize, TestIds } from '../../components/BannerAd';
 
 interface LandingPageProps {
   onEnterApp: () => void;
