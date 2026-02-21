@@ -14,15 +14,15 @@ import { DoctorConnect } from './components/DoctorConnect';
 import { MaterialLibrary } from './components/MaterialLibrary';
 import PrivacyPolicy from './components/PrivacyPolicy';
 
+// અહીં આપણે LandingPage ને સૌથી ઉપર ઈમ્પોર્ટ કર્યું છે (આ જ ભૂલ હતી જે સોલ્વ કરી દીધી છે)
+import { LandingPage } from './src/pages/LandingPage';
+
 import { MOCK_BOOKS } from './constants';
-// નીચે મુજબના ટાઈપ્સ આપણે types.ts માંથી લાવીએ છીએ
 import { Book, CourseLevel, Language, Role, Gender, MedicalField, DailyQuote } from './types';
 import { AuthProvider, useAuth } from './AuthContext';
 import { BannerAd, BannerAdSize, TestIds, RewardedAd } from './components/BannerAd';
 import { generateDailyQuote, checkFestiveTheme } from './geminiService';
 
-// અહીં આપણે ભાષા મુજબના અલગ-અલગ શબ્દો (Dictionary) બનાવ્યા છે.
-// યુઝર જે ભાષા પસંદ કરશે, તે મુજબ આ શબ્દો સ્ક્રીન પર દેખાશે.
 const UI_TEXT = {
   [Language.ENGLISH]: {
     lib: "Library", guru: "VaidyaGuru", desk: "Study Desk", board: "Bulletin", exam: "Exams", 
@@ -50,27 +50,22 @@ const UI_TEXT = {
   }
 };
 
-// ==========================================
-// OnboardingFlow કમ્પોનન્ટ: જ્યારે યુઝર પહેલીવાર એપ ખોલે ત્યારે આ સ્ક્રીન દેખાશે.
-// ==========================================
 const OnboardingFlow: React.FC = () => {
-  const { updateProfile, login, user } = useAuth(); // AuthContext માંથી યુઝરનો ડેટા લાવ્યા
-  const [step, setStep] = useState(0); // કયું સ્ટેપ ચાલે છે તે યાદ રાખવા માટે (0 થી 5)
+  const { updateProfile, login, user } = useAuth(); 
+  const [step, setStep] = useState(0); 
   const [selectedLang, setSelectedLang] = useState<Language>(Language.ENGLISH);
   const [name, setName] = useState("");
-  const [role, setRole] = useState<Role>(Role.STUDENT); // ડીફોલ્ટ રોલ
-  const [gender, setGender] = useState<Gender>(Gender.MALE); // ડીફોલ્ટ જાતિ
+  const [role, setRole] = useState<Role>(Role.STUDENT); 
+  const [gender, setGender] = useState<Gender>(Gender.MALE); 
 
-  // પસંદ કરેલી ભાષા મુજબ ટેક્સ્ટ સેટ કરીશું
   const t = UI_TEXT[selectedLang];
 
-  // જ્યારે બધી માહિતી ભરાઈ જાય ત્યારે પ્રોફાઈલ સેવ કરવા માટેનું ફંક્શન
   const handleFinish = () => {
     updateProfile({
       role, 
       gender, 
-      medicalField: MedicalField.BAMS, // એપ ક્રેશ ન થાય તે માટે બેકગ્રાઉન્ડમાં BAMS ફિક્સ કરી દીધું
-      courseLevel: CourseLevel.UG1,    // ડીફોલ્ટ લેવલ
+      medicalField: MedicalField.BAMS, 
+      courseLevel: CourseLevel.UG1,    
       isProfileComplete: true, 
       agreedToPrivacy: true, 
       preferredLanguage: selectedLang,
@@ -78,29 +73,26 @@ const OnboardingFlow: React.FC = () => {
     });
   };
 
-  // અલગ-અલગ સ્ટેપ (પેજ) બતાવવા માટેનું ફંક્શન
   const renderStep = () => {
     switch(step) {
-      case 0: // સ્ટેપ 0: ભાષા પસંદગી
+      case 0: 
         return (
           <div className="space-y-6 animate-in zoom-in duration-500">
             <h2 className="text-3xl font-bold text-center text-green-900 serif-font drop-shadow-sm">ભાષા પસંદ કરો<br/><span className="text-xl text-stone-500">Select Language</span></h2>
             <div className="grid gap-4 mt-8">
-              {/* અહીં મોડર્ન ગ્લાસ-ઇફેક્ટ અને હોવર એનિમેશન આપ્યું છે */}
               <button onClick={() => { setSelectedLang(Language.ENGLISH); setStep(1); }} className="p-5 bg-white/80 backdrop-blur-md border border-stone-200 rounded-[2rem] hover:bg-green-50 hover:border-green-600 font-bold text-lg transition-all hover:shadow-xl hover:-translate-y-1">English</button>
               <button onClick={() => { setSelectedLang(Language.GUJARATI); setStep(1); }} className="p-5 bg-white/80 backdrop-blur-md border border-stone-200 rounded-[2rem] hover:bg-green-50 hover:border-green-600 font-bold text-lg transition-all hover:shadow-xl hover:-translate-y-1">ગુજરાતી</button>
               <button onClick={() => { setSelectedLang(Language.HINDI); setStep(1); }} className="p-5 bg-white/80 backdrop-blur-md border border-stone-200 rounded-[2rem] hover:bg-green-50 hover:border-green-600 font-bold text-lg transition-all hover:shadow-xl hover:-translate-y-1">हिन्दी</button>
             </div>
           </div>
         );
-      case 1: // સ્ટેપ 1: નામ લખો
+      case 1: 
         return (
           <div className="space-y-6 text-center animate-in slide-in-from-right duration-500">
             <div className="w-24 h-24 mx-auto bg-gradient-to-tr from-green-800 to-green-600 rounded-full p-1 shadow-2xl">
                <img src="assets/logo.png" className="w-full h-full object-cover rounded-full border-4 border-white" alt="Logo" />
             </div>
             <h2 className="text-2xl font-bold serif-font text-stone-800">{t.enterName}</h2>
-            {/* નામ ટાઈપ કરવા માટેનું ઇનપુટ બોક્સ */}
             <input 
               type="text" 
               placeholder={t.enterName}
@@ -117,7 +109,7 @@ const OnboardingFlow: React.FC = () => {
             </button>
           </div>
         );
-      case 2: // સ્ટેપ 2: પ્રાઇવસી પોલિસી
+      case 2: 
         return (
           <div className="space-y-6 animate-in slide-in-from-right duration-500">
             <h2 className="text-2xl font-bold text-green-900 border-b-2 border-green-100 pb-3 serif-font">{t.privacyTitle}</h2>
@@ -134,18 +126,17 @@ const OnboardingFlow: React.FC = () => {
             <button onClick={() => setStep(3)} className="w-full p-5 bg-gradient-to-r from-green-900 to-green-700 text-white rounded-[2rem] font-bold text-lg shadow-xl hover:scale-105 transition-all">{t.privacyAccept}</button>
           </div>
         );
-      case 3: // સ્ટેપ 3: વ્યવસાય પસંદ કરો (રોલ)
+      case 3: 
         return (
           <div className="space-y-6 animate-in slide-in-from-right duration-500">
             <h2 className="text-2xl font-bold serif-font text-center text-stone-800">{t.selectRole}</h2>
             <div className="grid gap-4 mt-6">
-              {/* અહીં આપણે BAMS ને લગતા બે જ ઓપ્શન આપ્યા છે */}
               <button onClick={() => { setRole(Role.STUDENT); setStep(4); }} className="p-5 bg-white/80 backdrop-blur-md border border-stone-200 rounded-[2rem] hover:border-green-600 hover:bg-green-50 font-bold text-lg transition-all shadow-sm hover:shadow-xl hover:-translate-y-1">{t.roleScholar}</button>
               <button onClick={() => { setRole(Role.NORMAL); setStep(4); }} className="p-5 bg-white/80 backdrop-blur-md border border-stone-200 rounded-[2rem] hover:border-green-600 hover:bg-green-50 font-bold text-lg transition-all shadow-sm hover:shadow-xl hover:-translate-y-1">{t.roleNormal}</button>
             </div>
           </div>
         );
-      case 4: // સ્ટેપ 4: જાતિ પસંદ કરો
+      case 4: 
         return (
           <div className="space-y-6 animate-in slide-in-from-right duration-500">
             <h2 className="text-2xl font-bold serif-font text-center text-stone-800">{t.selectGender}</h2>
@@ -159,7 +150,7 @@ const OnboardingFlow: React.FC = () => {
             </div>
           </div>
         );
-      case 5: // સ્ટેપ 5: સ્વાગત સ્ક્રીન
+      case 5: 
         return (
           <div className="space-y-8 text-center animate-in zoom-in duration-700">
             <div className="w-28 h-28 bg-green-100 text-green-900 rounded-[2.5rem] flex items-center justify-center mx-auto shadow-inner animate-bounce rotate-3">
@@ -169,7 +160,6 @@ const OnboardingFlow: React.FC = () => {
                <h2 className="text-3xl font-bold serif-font text-stone-800 mb-2">Welcome, {user?.name}!</h2>
                <p className="text-stone-500 font-medium">Your digital ancient wisdom awaits.</p>
             </div>
-            {/* આ ફાઈનલ બટન છે, જે દબાવવાથી મુખ્ય એપ શરૂ થશે */}
             <button onClick={handleFinish} className="w-full p-5 bg-gradient-to-r from-green-900 to-green-700 text-white rounded-[2rem] font-bold text-lg shadow-[0_10px_25px_-5px_rgba(20,83,45,0.5)] hover:scale-105 transition-transform">{t.finish}</button>
           </div>
         );
@@ -177,14 +167,10 @@ const OnboardingFlow: React.FC = () => {
     }
   };
 
-  // મોડર્ન બેકગ્રાઉન્ડ માટેની સ્ટાઈલ
   return (
     <div className="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-[#f8f5f0] to-[#e6f0e9] overflow-hidden relative">
-      {/* બેકગ્રાઉન્ડમાં બ્લર થયેલા ગોળ આકારો (Modern UI Design) */}
       <div className="absolute top-10 left-10 w-64 h-64 bg-green-200/40 rounded-full blur-3xl mix-blend-multiply"></div>
       <div className="absolute bottom-10 right-10 w-72 h-72 bg-amber-200/40 rounded-full blur-3xl mix-blend-multiply"></div>
-      
-      {/* મુખ્ય સફેદ કાર્ડ જ્યાં બધું દેખાશે */}
       <div className="w-full max-w-md bg-white/70 backdrop-blur-xl rounded-[3rem] p-10 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] border border-white/50 relative z-10">
          {renderStep()}
       </div>
@@ -192,24 +178,17 @@ const OnboardingFlow: React.FC = () => {
   );
 };
 
-// ==========================================
-// MainApp કમ્પોનન્ટ: એપની મુખ્ય સ્ક્રીન જ્યાં લાઈબ્રેરી, ડેસ્ક વગેરે છે.
-// ==========================================
 const MainApp: React.FC = () => {
   const { user, loading: authLoading } = useAuth();
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
-  
-  // કયું ટેબ (Tab) ચાલુ છે તે નક્કી કરવા માટે
   const [activeTab, setActiveTab] = useState<'library' | 'guru' | 'desk' | 'board' | 'exam' | 'schedule' | 'connect' | 'admin' | 'profile' | 'material'>('library');
-  
   const [search, setSearch] = useState('');
   const [quote, setQuote] = useState<DailyQuote | null>(null);
   const [festive, setFestive] = useState<{ theme: string, title: string } | null>(null);
 
-  // એપ ચાલુ થાય ત્યારે સુવિચાર અને તહેવારની માહિતી લાવવા માટે
   useEffect(() => {
     if (user && user.isProfileComplete) {
-      generateDailyQuote(user.medicalField)
+      generateDailyQuote()
         .then(q => setQuote(q))
         .catch(e => console.error("Quote error", e));
       checkFestiveTheme()
@@ -218,7 +197,6 @@ const MainApp: React.FC = () => {
     }
   }, [user]);
 
-  // પુસ્તક ખોલવા માટેનું ફંક્શન (જાહેરાત સાથે)
   const handleBookClick = (book: Book) => {
     const GLOBAL_UNLOCK_KEY = 'vaidyaguru_global_books_unlocked_timestamp';
     const unlockedTime = localStorage.getItem(GLOBAL_UNLOCK_KEY);
@@ -235,20 +213,15 @@ const MainApp: React.FC = () => {
     }
   };
 
-  // જો ડેટા લોડ થતો હોય તો લોડિંગ સ્ક્રીન બતાવો
   if (authLoading) return <div className="min-h-screen flex items-center justify-center bg-stone-50"><div className="flex flex-col items-center gap-4"><div className="w-12 h-12 border-4 border-green-900 border-t-transparent rounded-full animate-spin"></div><p className="font-bold serif-font text-stone-500">Loading Wisdom...</p></div></div>;
-  
-  // જો પ્રોફાઈલ પૂરી ન હોય તો OnboardingFlow બતાવો
   if (!user || !user.isProfileComplete) return <OnboardingFlow />;
 
   const t = UI_TEXT[user.preferredLanguage] || UI_TEXT[Language.ENGLISH];
   const filteredBooks = MOCK_BOOKS.filter(b => b.title.toLowerCase().includes(search.toLowerCase()));
 
-  // થીમ કલર (હવે બધું BAMS એટલે કે લીલા રંગનું જ રહેશે)
   const themeColor = 'text-green-900 border-green-800';
   const themeBg = 'bg-gradient-to-r from-green-900 to-green-800';
 
-  // નેવિગેશન માટેના બટનો
   const navItems = [
     { id: 'library', label: t.lib, icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /> },
     { id: 'material', label: t.material, icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z" /> }, 
@@ -264,15 +237,11 @@ const MainApp: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f8f5f0] transition-colors duration-500">
-      
-      {/* હેડર (ઉપરનો ભાગ) મોડર્ન અને ગ્લાસ ઇફેક્ટ વાળું */}
       <header className="bg-white/80 backdrop-blur-xl border-b border-stone-200/50 p-4 sticky top-0 z-50 flex justify-between items-center shadow-sm">
         <div className="flex items-center gap-3">
           <img src="assets/logo.png" className="w-10 h-10 object-contain drop-shadow-md" alt="Logo" />
           <h1 className={`font-bold serif-font text-2xl hidden sm:block ${themeColor}`}>VaidyaGuru</h1>
         </div>
-        
-        {/* મોબાઈલ નેવિગેશન - નીચેની તરફ સ્લાઈડ થતું લિસ્ટ */}
         <div className="lg:hidden w-full overflow-x-auto no-scrollbar flex gap-3 pl-4">
             {navItems.map(item => (
               <button key={item.id} onClick={() => setActiveTab(item.id as any)} className={`flex-shrink-0 p-3 rounded-[1.2rem] transition-all ${activeTab === item.id ? themeBg + ' text-white shadow-lg scale-105' : 'text-stone-500 bg-white border border-stone-200 shadow-sm'}`}>
@@ -285,14 +254,9 @@ const MainApp: React.FC = () => {
         </div>
       </header>
 
-      {/* મુખ્ય કન્ટેન્ટ એરિયા */}
       <main className="flex-1 max-w-7xl mx-auto w-full pb-32 overflow-y-auto no-scrollbar scroll-smooth">
-        
-        {/* જો લાઈબ્રેરી ટેબ ચાલુ હોય તો આ દેખાશે */}
         {activeTab === 'library' && (
           <div className="space-y-6 animate-in fade-in duration-500 pt-6">
-            
-            {/* સુવિચારનું કાર્ડ (મોડર્ન 3D લુક) */}
             {quote && (
               <div className={`${themeBg} text-white p-8 md:p-10 rounded-[2.5rem] shadow-[0_20px_40px_-15px_rgba(20,83,45,0.6)] relative overflow-hidden group mx-4 transition-all hover:-translate-y-2`}>
                 <div className="absolute top-0 right-0 w-48 h-48 bg-white/20 blur-3xl rounded-full -mr-10 -mt-10"></div>
@@ -303,16 +267,12 @@ const MainApp: React.FC = () => {
                 </div>
               </div>
             )}
-            
-            {/* સર્ચ બાર */}
             <div className="px-4 sticky top-[72px] z-40 py-2">
               <div className="relative">
                  <input type="text" placeholder={t.searchPlaceholder} className="w-full p-5 pl-14 rounded-[2rem] border-2 border-transparent outline-none focus:border-green-600 shadow-[0_8px_30px_rgb(0,0,0,0.04)] bg-white/80 backdrop-blur-xl font-medium text-lg transition-all focus:shadow-lg" value={search} onChange={e => setSearch(e.target.value)} />
                  <svg className="w-6 h-6 text-stone-400 absolute left-5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
               </div>
             </div>
-            
-            {/* પુસ્તકોનું લિસ્ટ */}
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 px-4 pb-24 mt-4">
               {filteredBooks.map((book) => (
                 <div key={book.id} onClick={() => handleBookClick(book)} className="bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all cursor-pointer border border-stone-100 group relative">
@@ -332,7 +292,6 @@ const MainApp: React.FC = () => {
           </div>
         )}
         
-        {/* અહીં બીજા પેજ કનેક્ટ કરેલા છે */}
         {activeTab === 'guru' && <VaidyaGuru user={user} />}
         {activeTab === 'desk' && <StudyDesk user={user} />}
         {activeTab === 'board' && <BulletinBoard user={user} />}
@@ -343,14 +302,11 @@ const MainApp: React.FC = () => {
         {activeTab === 'material' && <MaterialLibrary user={user} />}
         {activeTab === 'profile' && <Profile />}
         {activeTab === 'privacy' && <PrivacyPolicy />}
-        
       </main>
 
-      {/* નીચેની તરફ જાહેરાત બતાવવા માટે */}
       <div className="fixed bottom-0 left-0 right-0 z-[60] bg-white/90 backdrop-blur-md border-t border-stone-200/50 p-1 shadow-[0_-10px_30px_rgba(0,0,0,0.05)]">
         <BannerAd unitId={TestIds.BANNER} size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER} />
       </div>
-
       {selectedBook && <BookReader book={selectedBook} onClose={() => setSelectedBook(null)} />}
     </div>
   );
@@ -359,11 +315,7 @@ const MainApp: React.FC = () => {
 // ==========================================
 // મુખ્ય એપને શરૂ કરવા માટે
 // ==========================================
-// અહીં આપણે LandingPage ને ઈમ્પોર્ટ કરીશું
-import { LandingPage } from './src/pages/LandingPage';
-
 const App: React.FC = () => {
-  // એપ શરૂ થાય ત્યારે લેન્ડિંગ પેજ બતાવવું કે નહીં તે નક્કી કરવા માટે
   const [showLanding, setShowLanding] = useState(true);
 
   return (
@@ -378,4 +330,3 @@ const App: React.FC = () => {
 };
 
 export default App;
-
