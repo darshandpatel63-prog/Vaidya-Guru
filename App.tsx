@@ -359,5 +359,23 @@ const MainApp: React.FC = () => {
 // ==========================================
 // મુખ્ય એપને શરૂ કરવા માટે
 // ==========================================
-const App: React.FC = () => <AuthProvider><MainApp /></AuthProvider>;
+// અહીં આપણે LandingPage ને ઈમ્પોર્ટ કરીશું
+import { LandingPage } from './src/pages/LandingPage';
+
+const App: React.FC = () => {
+  // એપ શરૂ થાય ત્યારે લેન્ડિંગ પેજ બતાવવું કે નહીં તે નક્કી કરવા માટે
+  const [showLanding, setShowLanding] = useState(true);
+
+  return (
+    <AuthProvider>
+      {showLanding ? (
+        <LandingPage onEnterApp={() => setShowLanding(false)} />
+      ) : (
+        <MainApp />
+      )}
+    </AuthProvider>
+  );
+};
+
 export default App;
+
