@@ -1,17 +1,19 @@
-import { Book, CourseLevel, Language, MedicalField, StudyMaterial } from './types';
+// આ ફાઈલમાં આપણી એપનો બધો ડેટા (પુસ્તકો, વિડીયો, PDF લિંક્સ) છે.
+// અહીંથી MBBS, BHMS અને નર્સિંગના પુસ્તકો કાઢીને માત્ર BAMS નો જ ડેટા રાખ્યો છે.
+
+import { Book, CourseLevel, Language, StudyMaterial } from './types';
 
 // ==========================================
-// EXTRA STUDY MATERIALS (Developer Added)
-// Add your Google Drive / YouTube links here
+// EXTRA STUDY MATERIALS (વધારાનું સાહિત્ય)
 // ==========================================
 export const MOCK_MATERIALS: StudyMaterial[] = [
-  // 1. SAMHITA ADHYAYAN (Astanga Hridaya / Charaka)
+  // 1. SAMHITA ADHYAYAN
   {
     id: 'samhita-1',
     title: 'Astanga Hridaya Sutrasthana Ch 1',
     subject: 'Samhita Adhyayan',
     type: 'video',
-    url: '#', // <--- Paste YouTube Link Here
+    url: '#', 
     description: 'Ayushkamiya Adhyaya explanation.'
   },
   {
@@ -19,7 +21,7 @@ export const MOCK_MATERIALS: StudyMaterial[] = [
     title: 'Charaka Samhita Intro Notes',
     subject: 'Samhita Adhyayan',
     type: 'pdf',
-    url: '#', // <--- Paste Drive Link Here
+    url: '#', 
     description: 'Notes on Sutrasthana basics.'
   },
 
@@ -75,8 +77,7 @@ export const MOCK_MATERIALS: StudyMaterial[] = [
     type: 'pdf',           
     url: 'https://drive.google.com/file/d/1-VcxvKHGGkqoIIQIKN0fvENEfVDBCXE3/view?usp=drivesdk',  
     description: 'Pa-1 short notes'
-},
-  
+  },
 
   // 5. RACHANA SHARIR (Anatomy)
   {
@@ -89,10 +90,11 @@ export const MOCK_MATERIALS: StudyMaterial[] = [
   }
 ];
 
+// ==========================================
+// BAMS BOOKS (માત્ર આયુર્વેદના જ પુસ્તકો)
+// ==========================================
 export const MOCK_BOOKS: Book[] = [
-  // ==========================================
-  // BAMS 1st Year (B.A.M.S. First Prof)
-  // ==========================================
+  // 1st Year (પ્રથમ વર્ષ)
   {
     id: 'bams1-padartha',
     title: 'Padartha Vigyan (પદાર્થ વિજ્ઞાન)',
@@ -111,15 +113,9 @@ export const MOCK_BOOKS: Book[] = [
             number: 1,
             title: 'Lakshana of Ayu (આયુનાં લક્ષણો)',
             content: {
-              [Language.GUJARATI]: `અધ્યાય ૧: આયુર્વેદ નિરૂપણ
-શરીર, ઇન્દ્રિય, સત્વ (મન) અને આત્માના સંયોગને 'આયુ' કહેવાય છે.
-આયુર્વેદનું પ્રયોજન: ૧. સ્વસ્થ વ્યક્તિના સ્વાસ્થ્યનું રક્ષણ કરવું. ૨. રોગીના રોગનું નિવારણ કરવું.`,
-              [Language.ENGLISH]: `Chapter 1: Definition of Ayu
-Ayu (Life) is the combination of Sharira (Body), Indriya (Senses), Satva (Mind), and Atma (Soul).
-Aim: To maintain health of the healthy and cure the diseased.`,
-              [Language.HINDI]: `अध्याय १: आयुर्वेद निरूपण
-शरीर, इन्द्रिय, सत्व (मन) और आत्मा के संयोग को 'आयु' कहते हैं।
-प्रयोजन: १. स्वस्थ व्यक्ति के स्वास्थ्य की रक्षा करना। २. रोगी के रोग का निवारण करना।`
+              [Language.GUJARATI]: `અધ્યાય ૧: આયુર્વેદ નિરૂપણ\nશરીર, ઇન્દ્રિય, સત્વ (મન) અને આત્માના સંયોગને 'આયુ' કહેવાય છે.\nઆયુર્વેદનું પ્રયોજન: ૧. સ્વસ્થ વ્યક્તિના સ્વાસ્થ્યનું રક્ષણ કરવું. ૨. રોગીના રોગનું નિવારણ કરવું.`,
+              [Language.ENGLISH]: `Chapter 1: Definition of Ayu\nAyu (Life) is the combination of Sharira (Body), Indriya (Senses), Satva (Mind), and Atma (Soul).\nAim: To maintain health of the healthy and cure the diseased.`,
+              [Language.HINDI]: `अध्याय १: आयुर्वेद निरूपण\nशरीर, इन्द्रिय, सत्व (मन) और आत्मा के संयोग को 'आयु' कहते हैं।\nप्रयोजन: १. स्वस्थ व्यक्ति के स्वास्थ्य की रक्षा करना। २. रोगी के रोग का निवारण करना।`
             }
           }
         ]
@@ -144,12 +140,9 @@ Aim: To maintain health of the healthy and cure the diseased.`,
             number: 1,
             title: 'Tridosha (ત્રિદોષ)',
             content: {
-              [Language.GUJARATI]: `અધ્યાય ૧: ત્રિદોષ સિદ્ધાંત
-વાત, પિત્ત અને કફ - આ ત્રણ શારીરિક દોષો છે. તે શરીરને ધારણ કરે છે.`,
-              [Language.ENGLISH]: `Chapter 1: Tridosha Theory
-Vata, Pitta, and Kapha are the three humors that sustain the body.`,
-              [Language.HINDI]: `अध्याय १: त्रिदोष सिद्धांत
-वात, पित्त और कफ - ये तीन शारीरिक दोष हैं जो शरीर को धारण करते हैं।`
+              [Language.GUJARATI]: `અધ્યાય ૧: ત્રિદોષ સિદ્ધાંત\nવાત, પિત્ત અને કફ - આ ત્રણ શારીરિક દોષો છે. તે શરીરને ધારણ કરે છે.`,
+              [Language.ENGLISH]: `Chapter 1: Tridosha Theory\nVata, Pitta, and Kapha are the three humors that sustain the body.`,
+              [Language.HINDI]: `अध्याय १: त्रिदोष सिद्धांत\nवात, पित्त और कफ - ये तीन शारीरिक दोष हैं जो शरीर को धारण करते हैं।`
             }
           }
         ]
@@ -174,12 +167,9 @@ Vata, Pitta, and Kapha are the three humors that sustain the body.`,
             number: 1,
             title: 'Marma Sharir (મર્મ શારીર)',
             content: {
-              [Language.GUJARATI]: `અધ્યાય ૧: મર્મ વિજ્ઞાન
-શરીરમાં ૧૦૭ મર્મ સ્થાનો છે જ્યાં પ્રાણ વસે છે. શિર, હૃદય અને બસ્તિ મુખ્ય છે.`,
-              [Language.ENGLISH]: `Chapter 1: Marma Points
-There are 107 Marma points where life energy resides. Head, Heart, and Bladder are vital.`,
-              [Language.HINDI]: `अध्याय १: मर्म विज्ञान
-शरीर में १०७ मर्म स्थान होते हैं जहाँ प्राण बसते हैं। शिर, हृदय और बस्ति मुख्य मर्म हैं।`
+              [Language.GUJARATI]: `અધ્યાય ૧: મર્મ વિજ્ઞાન\nશરીરમાં ૧૦૭ મર્મ સ્થાનો છે જ્યાં પ્રાણ વસે છે. શિર, હૃદય અને બસ્તિ મુખ્ય છે.`,
+              [Language.ENGLISH]: `Chapter 1: Marma Points\nThere are 107 Marma points where life energy resides. Head, Heart, and Bladder are vital.`,
+              [Language.HINDI]: `अध्याय १: मर्म विज्ञान\nशरीर में १०७ मर्म स्थान होते हैं जहाँ प्राण बसते हैं। शिर, हृदय और बस्ति मुख्य मर्म हैं।`
             }
           }
         ]
@@ -187,9 +177,7 @@ There are 107 Marma points where life energy resides. Head, Heart, and Bladder a
     ]
   },
 
-  // ==========================================
-  // BAMS 2nd Year
-  // ==========================================
+  // 2nd Year (દ્વિતીય વર્ષ)
   {
     id: 'bams2-dg',
     title: 'Dravyaguna Vigyan (દ્રવ્યગુણ)',
@@ -208,13 +196,9 @@ There are 107 Marma points where life energy resides. Head, Heart, and Bladder a
             number: 1,
             title: 'Haritaki (હરડે)',
             content: {
-              [Language.GUJARATI]: `અધ્યાય ૧: હરિતકી (Terminalia chebula)
-રસ: લવણ સિવાય પાંચ રસ. ગુણ: લઘુ, રૂક્ષ.
-કર્મ: અનુલોમન, રસાયણ. 'હરડે માતા સમાન હિતકારી છે'.`,
-              [Language.ENGLISH]: `Chapter 1: Haritaki
-Rasa: Five tastes except Salty. Action: Mild laxative, Rejuvenative.`,
-              [Language.HINDI]: `अध्याय १: हरितकी
-रस: लवण रहित पंच रस. गुण: लघु, रूक्ष। कर्म: अनुलोमन, रसायन।`
+              [Language.GUJARATI]: `અધ્યાય ૧: હરિતકી (Terminalia chebula)\nરસ: લવણ સિવાય પાંચ રસ. ગુણ: લઘુ, રૂક્ષ.\nકર્મ: અનુલોમન, રસાયણ. 'હરડે માતા સમાન હિતકારી છે'.`,
+              [Language.ENGLISH]: `Chapter 1: Haritaki\nRasa: Five tastes except Salty. Action: Mild laxative, Rejuvenative.`,
+              [Language.HINDI]: `अध्याय १: हरितकी\nरस: लवण रहित पंच रस. गुण: लघु, रूक्ष। कर्म: अनुलोमन, रसायन।`
             }
           }
         ]
@@ -239,12 +223,9 @@ Rasa: Five tastes except Salty. Action: Mild laxative, Rejuvenative.`,
             number: 1,
             title: 'Parada Samskara',
             content: {
-              [Language.GUJARATI]: `અધ્યાય ૧: પારદ અષ્ટાદશ સંસ્કાર
-પારદને શુદ્ધ કરવા માટે ૧૮ સંસ્કાર કરવામાં આવે છે. શુદ્ધ પારદ રોગનાશક છે.`,
-              [Language.ENGLISH]: `Chapter 1: Mercury Processing
-18 Samskaras are performed to purify Mercury (Parada).`,
-              [Language.HINDI]: `अध्याय १: पारद संस्कार
-पारद शुद्धि के लिए १८ संस्कार किए जाते हैं।`
+              [Language.GUJARATI]: `અધ્યાય ૧: પારદ અષ્ટાદશ સંસ્કાર\nપારદને શુદ્ધ કરવા માટે ૧૮ સંસ્કાર કરવામાં આવે છે. શુદ્ધ પારદ રોગનાશક છે.`,
+              [Language.ENGLISH]: `Chapter 1: Mercury Processing\n18 Samskaras are performed to purify Mercury (Parada).`,
+              [Language.HINDI]: `अध्याय १: पारद संस्कार\nपारद शुद्धि के लिए १८ संस्कार किए जाते हैं।`
             }
           }
         ]
@@ -252,9 +233,7 @@ Rasa: Five tastes except Salty. Action: Mild laxative, Rejuvenative.`,
     ]
   },
 
-  // ==========================================
-  // BAMS 3rd Year
-  // ==========================================
+  // 3rd Year (તૃતીય વર્ષ)
   {
     id: 'bams3-prasuti',
     title: 'Prasuti & Stri Roga',
@@ -273,12 +252,9 @@ Rasa: Five tastes except Salty. Action: Mild laxative, Rejuvenative.`,
             number: 1,
             title: 'Antenatal Care',
             content: {
-              [Language.GUJARATI]: `અધ્યાય ૧: ગર્ભિણી પરિચર્યા
-ગર્ભવતી સ્ત્રી માટે માસાનુમાસિક આહાર વિહારનું વર્ણન.`,
-              [Language.ENGLISH]: `Chapter 1: Antenatal Care
-Month-wise dietary regimen for pregnant women.`,
-              [Language.HINDI]: `अध्याय १: गर्भिणी परिचर्या
-गर्भवती स्त्री के लिए मासानुमासिक आहार-विहार का वर्णन।`
+              [Language.GUJARATI]: `અધ્યાય ૧: ગર્ભિણી પરિચર્યા\nગર્ભવતી સ્ત્રી માટે માસાનુમાસિક આહાર વિહારનું વર્ણન.`,
+              [Language.ENGLISH]: `Chapter 1: Antenatal Care\nMonth-wise dietary regimen for pregnant pregnant women.`,
+              [Language.HINDI]: `अध्याय १: गर्भिणी परिचर्या\nगर्भवती स्त्री के लिए मासानुमासिक आहार-विहार का वर्णन।`
             }
           }
         ]
@@ -303,12 +279,9 @@ Month-wise dietary regimen for pregnant women.`,
             number: 1,
             title: 'Dantodbhava',
             content: {
-              [Language.GUJARATI]: `અધ્યાય ૧: દંતોદ્ભવ
-બાળકમાં દાંત આવતી વખતે થતા ઉપદ્રવો: જ્વર, અતિસાર.`,
-              [Language.ENGLISH]: `Chapter 1: Teething
-Complications during dentition in children: Fever, Diarrhea.`,
-              [Language.HINDI]: `अध्याय १: दन्तोद्भव
-बच्चों में दाँत निकलते समय होने वाले रोग: ज्वर, अतिसार।`
+              [Language.GUJARATI]: `અધ્યાય ૧: દંતોદ્ભવ\nબાળકમાં દાંત આવતી વખતે થતા ઉપદ્રવો: જ્વર, અતિસાર.`,
+              [Language.ENGLISH]: `Chapter 1: Teething\nComplications during dentition in children: Fever, Diarrhea.`,
+              [Language.HINDI]: `अध्याय १: दन्तोद्भव\nबच्चों में दाँत निकलते समय होने वाले रोग: ज्वर, अतिसार।`
             }
           }
         ]
@@ -316,9 +289,7 @@ Complications during dentition in children: Fever, Diarrhea.`,
     ]
   },
 
-  // ==========================================
-  // BAMS 4th Year
-  // ==========================================
+  // 4th Year (ચતુર્થ વર્ષ)
   {
     id: 'bams4-kayachikitsa',
     title: 'Kayachikitsa (કાયચિકિત્સા)',
@@ -337,12 +308,9 @@ Complications during dentition in children: Fever, Diarrhea.`,
             number: 1,
             title: 'Jwara Chikitsa',
             content: {
-              [Language.GUJARATI]: `અધ્યાય ૧: જ્વર ચિકિત્સા
-જ્વરના પ્રારંભમાં લંઘન (ઉપવાસ) શ્રેષ્ઠ છે.`,
-              [Language.ENGLISH]: `Chapter 1: Fever Treatment
-Fasting (Langhana) is best at the onset of fever.`,
-              [Language.HINDI]: `अध्याय १: ज्वर चिकित्सा
-ज्वर के आरम्भ में लंघन (उपवास) श्रेष्ठ है।`
+              [Language.GUJARATI]: `અધ્યાય ૧: જ્વર ચિકિત્સા\nજ્વરના પ્રારંભમાં લંઘન (ઉપવાસ) શ્રેષ્ઠ છે.`,
+              [Language.ENGLISH]: `Chapter 1: Fever Treatment\nFasting (Langhana) is best at the onset of fever.`,
+              [Language.HINDI]: `अध्याय १: ज्वर चिकित्सा\nज्वर के आरम्भ में लंघन (उपवास) श्रेष्ठ है।`
             }
           }
         ]
@@ -367,264 +335,9 @@ Fasting (Langhana) is best at the onset of fever.`,
             number: 1,
             title: 'Surgical Instruments',
             content: {
-              [Language.GUJARATI]: `અધ્યાય ૧: યંત્ર અને શસ્ત્ર
-૧૦૧ યંત્રો અને ૨૦ શસ્ત્રોનું વર્ણન. કંકમુખ યંત્ર પ્રધાન છે.`,
-              [Language.ENGLISH]: `Chapter 1: Instruments
-Description of 101 Yantras and 20 Shastras.`,
-              [Language.HINDI]: `अध्याय १: यन्त्र और शस्त्र
-१०१ यन्त्र और २० शस्त्रों का वर्णन। कंकमुख यन्त्र प्रधान है।`
-            }
-          }
-        ]
-      }
-    ]
-  },
-
-  // ==========================================
-  // MBBS Courses
-  // ==========================================
-  {
-    id: 'mbbs-anat',
-    title: 'Gray\'s Anatomy',
-    author: 'Henry Gray',
-    subject: 'Human Anatomy (MBBS)',
-    level: CourseLevel.UG1,
-    language: Language.ENGLISH,
-    coverImage: 'https://images.unsplash.com/photo-1530210124550-912dc1381cb8?auto=format&fit=crop&q=80&w=400',
-    sthanas: [
-      {
-        id: 'mb-an-s1',
-        title: 'General Anatomy',
-        adhyayas: [
-          {
-            id: 'mb-an-a1',
-            number: 1,
-            title: 'Introduction',
-            content: {
-              [Language.ENGLISH]: `Chapter 1: Introduction to Anatomy
-Anatomical positions, planes, and terms of movement.`,
-              [Language.GUJARATI]: `અધ્યાય ૧: શરીર રચના પરિચય
-એનાટોમિકલ પોઝિશન અને હલનચલનના પ્રકારો.`,
-              [Language.HINDI]: `अध्याय १: शरीर रचना परिचय
-एनाटॉमिकल पोजीशन और गतिविधियों के प्रकार।`
-            }
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'mbbs-physio',
-    title: 'Guyton Physiology',
-    author: 'Guyton & Hall',
-    subject: 'Physiology (MBBS)',
-    level: CourseLevel.UG1,
-    language: Language.ENGLISH,
-    coverImage: 'https://images.unsplash.com/photo-1576086213369-97a306d36557?auto=format&fit=crop&q=80&w=400',
-    sthanas: [
-      {
-        id: 'mb-ph-s1',
-        title: 'Cell Physiology',
-        adhyayas: [
-          {
-            id: 'mb-ph-a1',
-            number: 1,
-            title: 'The Cell',
-            content: {
-              [Language.ENGLISH]: `Chapter 1: Functional Organization
-Structure of the cell, transport across membranes.`,
-              [Language.GUJARATI]: `અધ્યાય ૧: કોષ રચના
-કોષનું બંધારણ અને પટલ દ્વારા વહન.`,
-              [Language.HINDI]: `अध्याय १: कोशिका रचना
-कोशिका की संरचना और झिल्ली द्वारा परिवहन।`
-            }
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'mbbs-patho',
-    title: 'Robbins Pathology',
-    author: 'Robbins & Cotran',
-    subject: 'Pathology (MBBS)',
-    level: CourseLevel.UG2,
-    language: Language.ENGLISH,
-    coverImage: 'https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&q=80&w=400',
-    sthanas: [
-      {
-        id: 'mb-pa-s1',
-        title: 'Cell Injury',
-        adhyayas: [
-          {
-            id: 'mb-pa-a1',
-            number: 1,
-            title: 'Cellular Adaptations',
-            content: {
-              [Language.ENGLISH]: `Chapter 1: Cellular Adaptations
-Hypertrophy, Hyperplasia, Atrophy, and Metaplasia explained.`,
-              [Language.GUJARATI]: `અધ્યાય ૧: કોષીય અનુકૂલન
-હાઇપરટ્રોફી, હાઇપરપ્લેસિયા, એટ્રોફી અને મેટાપ્લેસિયા.`,
-              [Language.HINDI]: `अध्याय १: कोशीय अनुकूलन
-हाइपरट्रॉफी, हाइपरप्लासिया, एट्रोफी और मेटाप्लासिया।`
-            }
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'mbbs-pharma',
-    title: 'KDT Pharmacology',
-    author: 'K.D. Tripathi',
-    subject: 'Pharmacology (MBBS)',
-    level: CourseLevel.UG2,
-    language: Language.ENGLISH,
-    coverImage: 'https://images.unsplash.com/photo-1585435557343-3b092031a831?auto=format&fit=crop&q=80&w=400',
-    sthanas: [
-      {
-        id: 'mb-phar-s1',
-        title: 'General Pharma',
-        adhyayas: [
-          {
-            id: 'mb-phar-a1',
-            number: 1,
-            title: 'Pharmacokinetics',
-            content: {
-              [Language.ENGLISH]: `Chapter 1: Pharmacokinetics
-Absorption, Distribution, Metabolism, and Excretion (ADME).`,
-              [Language.GUJARATI]: `અધ્યાય ૧: ફાર્માકોકાઈનેટિક્સ
-શોષણ, વિતરણ, ચયાપચય અને ઉત્સર્જન (ADME).`,
-              [Language.HINDI]: `अध्याय १: फार्माकोकाइनेटिक्स
-अवशोषण, वितरण, चयापचय और उत्सर्जन (ADME).`
-            }
-          }
-        ]
-      }
-    ]
-  },
-
-  // ==========================================
-  // BHMS Courses
-  // ==========================================
-  {
-    id: 'bhms-organon',
-    title: 'Organon of Medicine',
-    author: 'Samuel Hahnemann',
-    subject: 'Homeopathy',
-    level: CourseLevel.UG1,
-    language: Language.ENGLISH,
-    coverImage: 'https://images.unsplash.com/photo-1532153975070-2e9ab71f1b14?auto=format&fit=crop&q=80&w=400',
-    sthanas: [
-      {
-        id: 'bh-org-s1',
-        title: 'Principles',
-        adhyayas: [
-          {
-            id: 'bh-org-a1',
-            number: 1,
-            title: 'Aphorism 1',
-            content: {
-              [Language.ENGLISH]: `Aphorism 1: The Physician's Mission
-The physician's high and only mission is to restore the sick to health, to cure, as it is termed.`,
-              [Language.GUJARATI]: `એફોરિઝમ ૧: ચિકિત્સકનું મિશન
-ચિકિત્સકનું એકમાત્ર મિશન રોગીને સ્વસ્થ કરવાનું છે.`,
-              [Language.HINDI]: `एफोरिज्म १: चिकित्सक का मिशन
-चिकित्सक का एकमात्र मिशन रोगी को स्वस्थ करना है।`
-            }
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'bhms-materia',
-    title: 'Materia Medica',
-    author: 'William Boericke',
-    subject: 'Homeopathy',
-    level: CourseLevel.UG2,
-    language: Language.ENGLISH,
-    coverImage: 'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?auto=format&fit=crop&q=80&w=400',
-    sthanas: [
-      {
-        id: 'bh-mm-s1',
-        title: 'Remedies',
-        adhyayas: [
-          {
-            id: 'bh-mm-a1',
-            number: 1,
-            title: 'Aconitum Napellus',
-            content: {
-              [Language.ENGLISH]: `Chapter 1: Aconitum Napellus
-Keynote: Fear, Anxiety, Restlessness. Sudden onset of symptoms.`,
-              [Language.GUJARATI]: `અધ્યાય ૧: એકોનાઈટ
-મુખ્ય લક્ષણો: ડર, ચિંતા, બેચેની. લક્ષણોની અચાનક શરૂઆત.`,
-              [Language.HINDI]: `अध्याय १: एकोनाइट
-मुख्य लक्षण: डर, चिंता, बेचैनी। लक्षणों की अचानक शुरुआत।`
-            }
-          }
-        ]
-      }
-    ]
-  },
-
-  // ==========================================
-  // Nursing Courses
-  // ==========================================
-  {
-    id: 'nurs-fund',
-    title: 'Nursing Fundamentals',
-    author: 'Potter & Perry',
-    subject: 'Nursing',
-    level: CourseLevel.UG1,
-    language: Language.ENGLISH,
-    coverImage: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=400',
-    sthanas: [
-      {
-        id: 'ns-fn-s1',
-        title: 'Basics',
-        adhyayas: [
-          {
-            id: 'ns-fn-a1',
-            number: 1,
-            title: 'Patient Care',
-            content: {
-              [Language.ENGLISH]: `Chapter 1: Patient Care
-Hygiene, vital signs monitoring, and compassionate care.`,
-              [Language.GUJARATI]: `અધ્યાય ૧: દર્દીની સંભાળ
-સ્વચ્છતા, વાઈટલ સાિન્સ અને કરુણાપૂર્ણ સંભાળ.`,
-              [Language.HINDI]: `अध्याय १: रोगी की देखभाल
-स्वच्छता, वाइटल साइन्स और करुणापूर्ण देखभाल।`
-            }
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'nurs-msn',
-    title: 'Medical Surgical Nursing',
-    author: 'Brunner & Suddarth',
-    subject: 'Nursing',
-    level: CourseLevel.UG2,
-    language: Language.ENGLISH,
-    coverImage: 'https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&q=80&w=400',
-    sthanas: [
-      {
-        id: 'ns-msn-s1',
-        title: 'Perioperative Care',
-        adhyayas: [
-          {
-            id: 'ns-msn-a1',
-            number: 1,
-            title: 'Pre-operative Nursing',
-            content: {
-              [Language.ENGLISH]: `Chapter 1: Pre-operative Care
-Patient assessment, consent, and preparation for surgery.`,
-              [Language.GUJARATI]: `અધ્યાય ૧: ઓપરેશન પૂર્વેની સંભાળ
-દર્દીનું મૂલ્યાંકન, સંમતિ અને સર્જરી માટેની તૈયારી.`,
-              [Language.HINDI]: `अध्याय १: ऑपरेशन पूर्व देखभाल
-रोगी का मूल्यांकन, सहमति और सर्जरी की तैयारी।`
+              [Language.GUJARATI]: `અધ્યાય ૧: યંત્ર અને શસ્ત્ર\n૧૦૧ યંત્રો અને ૨૦ શસ્ત્રોનું વર્ણન. કંકમુખ યંત્ર પ્રધાન છે.`,
+              [Language.ENGLISH]: `Chapter 1: Instruments\nDescription of 101 Yantras and 20 Shastras.`,
+              [Language.HINDI]: `अध्याय १: यन्त्र और शस्त्र\n१०१ यन्त्र और २० शस्त्रों का वर्णन। कंकमुख यन्त्र प्रधान है।`
             }
           }
         ]
